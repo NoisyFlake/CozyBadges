@@ -94,6 +94,8 @@ UIColor *originalTintColor = nil;
 }
 
 -(void)respring {
+	[self.view endEditing:YES];
+
 	pid_t pid;
 	const char* args[] = {"sbreload", NULL};
 	posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, (char* const*)args, NULL);
