@@ -12,52 +12,52 @@
 #import "CozyBadges.h"
 #import "CBColors.h"
 
+NSMutableDictionary *prefs, *defaultPrefs;
+
 %hook SBIconView
 	-(SBIconLabelImageParameters *)_labelImageParameters {
 		SBIconLabelImageParameters *params = %orig;
 
 		// Overwrite with our own initMethod to pass the icon to it
-	    return params ? [[%c(CBIconLabelImageParameters) alloc] initWithParameters:params icon:[self icon]] : nil;
+		return params ? [[%c(CBIconLabelImageParameters) alloc] initWithParameters:params icon:[self icon]] : nil;
 	}
 
 	-(void)_updateAccessoryViewWithAnimation:(BOOL)arg1 {
-	    // Disable legibility settings for active labels (prevents iOS from darkening the label on a bright wallpaper)
-	    _UILegibilitySettings* settings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
+		// Disable legibility settings for active labels (prevents iOS from darkening the label on a bright wallpaper)
+		_UILegibilitySettings* settings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
 
-	    SBIconLabelImageParameters *params = [self _labelImageParameters];
-	    SBIconLabelView *labelView = MSHookIvar<SBIconLabelView *>(self, "_labelView");
+		SBIconLabelImageParameters *params = [self _labelImageParameters];
+		SBIconLabelView *labelView = MSHookIvar<SBIconLabelView *>(self, "_labelView");
 
-	    if(params != nil && labelView != nil) {
-	        // Apply legibility settings to the label if necessary
-	        [labelView updateIconLabelWithSettings:settings imageParameters:params];
+		if(params != nil && labelView != nil) {
+			// Apply legibility settings to the label if necessary
+			[labelView updateIconLabelWithSettings:settings imageParameters:params];
 
-	        SBIconLabelImage *labelImage = [%c(SBIconLabelImage) imageWithParameters:params];
-	        // [labelView setImage:labelImage];
-	        [labelView.imageView setImage:labelImage];
+			SBIconLabelView *imageView = (SBIconLabelView *)([labelView respondsToSelector:@selector(imageView)] ? labelView.imageView : labelView);
+			SBIconLabelImage *newImage = [%c(SBIconLabelImage) imageWithParameters:params];
+			[imageView setImage:newImage];
 
+			// Recalculate width of the label in case the text changed
+			CGRect frame = imageView.frame;
+			frame.size = newImage.size;
+			[imageView setFrame:frame];
 
-	        // TODO: This is probably needed for changing the text dynamically, needed later?
-            // CGRect frame = labelView.imageView.frame;
-            // frame.size = labelImage.size;
+			// Don't hide dock labels
+			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
+				labelView.hidden = NO;
+			}
 
-            // [labelView.imageView setFrame:frame];
+		}
 
-	        // if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
+		%orig;
+	}
 
-	        // }
-	        // TODO: is this still needed for Dock icons?
-	        // else if ([labelView isKindOfClass:%c(SBIconSimpleLabelView)]) {
-	        // 	HBLogWarn(@"Got a simple View");
-	        //     // SBIconSimpleLabelView (used for Dock Icons) is already a UIImageView, so no need to get imageView
+	-(BOOL)isLabelHidden {
+		return NO;
+	}
 
-	        //     CGRect frame = labelView.frame;
-	        //     frame.size = labelImage.size;
-
-	        //     [labelView setFrame:frame];
-	        // }
-	    }
-
-	    %orig;
+	-(BOOL)allowsLabelArea {
+		return YES;
 	}
 
 	-(void)_createAccessoryViewIfNecessary {
@@ -66,22 +66,63 @@
 	}
 %end
 
+%hook SBDockIconListView
+
+	// Move icons in the dock up to make space for the labels
+	-(CGPoint)originForIconAtCoordinate:(SBIconCoordinate)arg1 metrics:(const id*)arg2 {
+	    CGPoint point = %orig;
+	    NSArray *icons = [self icons];
+
+	    NSUInteger count = 1;
+	    for(SBIcon *icon in icons) {
+	        if (count == arg1.col) {
+	            // This is the icon we are currently setting the origin for
+	            if ([icon badgeValue] > -1) {
+	                CGPoint newPoint = CGPointMake(point.x, point.y - 8);
+	                return newPoint;
+	            }
+	        }
+
+	        count++;
+	    }
+
+	    return %orig;
+	}
+
+%end
+
 %subclass CBIconLabelImageParameters : SBIconLabelImageParameters
-	%property (nonatomic, retain) SBApplicationIcon *icon;
+	%property (nonatomic, retain) SBIcon *icon;
+	%property (nonatomic, retain) SBIcon *folderIcon;
 
 	%new
 	-(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon {
-	    self = [self initWithParameters:params];
+		self = [self initWithParameters:params];
 
-        if([icon isFolderIcon]) {
-        	// TODO
-            // self.folderIcon = (SBFolderIcon *)icon;
-            // self.icon = [self mainIconForFolder:icon];
-        } else {
-            self.icon = (SBApplicationIcon *)icon;
-        }
+		self.icon = icon;
+		self.folderIcon = [icon isFolderIcon] ? [self iconForFolder:icon] : nil;
 
-	    return self;
+		return self;
+	}
+
+	-(void)dealloc {
+		self.icon = nil;
+		%orig;
+	}
+
+	%new
+	-(SBIcon *)iconForFolder:(SBFolderIcon *)folderIcon {
+	    SBIcon *ret = nil;
+
+	    for(SBIcon *icon in [[folderIcon folder] allIcons]) {
+	        if(ret == nil) {
+	            ret = icon;
+	        } else if([icon badgeValue] > [ret badgeValue]) {
+	            ret = icon;
+	        }
+	    }
+
+	    return ret;
 	}
 
 	-(BOOL)isColorspaceGrayscale {
@@ -90,14 +131,61 @@
 
 	-(UIColor *)focusHighlightColor {
 		if ([self.icon badgeValue] > 0) {
-			UIColor *avgColor = [[self.icon unmaskedIconImageWithInfo:nil] averageColor];
+			SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+			UIColor *avgColor = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
 			return avgColor;
 		}
 
 		return %orig;
 	}
+
+	-(NSString *)text {
+		if ([self.icon badgeValue] > 0) {
+			return [NSString stringWithFormat:@"%lld Nachricht%@", [self.icon badgeValue], [self.icon badgeValue] > 1 ? @"en" : @""];
+		};
+
+		return %orig;
+	}
+
 %end
 
+// ----- PREFERENCE HANDLING ----- //
+
+static BOOL getBool(NSString *key) {
+	id ret = [prefs objectForKey:key];
+
+	if(ret == nil) {
+		ret = [defaultPrefs objectForKey:key];
+	}
+
+	return [ret boolValue];
+}
+
+// static NSString* getValue(NSString *key) {
+// 	return [prefs objectForKey:key] ?: [defaultPrefs objectForKey:key];
+// }
+
+static void loadPrefs() {
+	prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.noisyflake.cozybadgesprefs.plist"];
+}
+
+static void initPrefs() {
+	// Copy the default preferences file when the actual preference file doesn't exist
+	NSString *path = @"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist";
+	NSString *pathDefault = @"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist";
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if (![fileManager fileExistsAtPath:path]) {
+		[fileManager copyItemAtPath:pathDefault toPath:path error:nil];
+	}
+}
+
 %ctor {
-	HBLogWarn(@"----- CozyBadges loaded -----");
+	initPrefs();
+	loadPrefs();
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPrefs, CFSTR("com.noisyflake.cozybadgesprefs/prefsupdated"), NULL, CFNotificationSuspensionBehaviorCoalesce);
+
+	if (getBool(@"enabled")) {
+		%init(_ungrouped);
+		HBLogWarn(@"----- CozyBadges loaded -----");
+	}
 }

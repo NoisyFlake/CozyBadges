@@ -10,15 +10,23 @@
 @interface SBApplicationIcon : SBLeafIcon
 @end
 
+@interface SBFolder : NSObject
+-(id)allIcons;
+@end
+
+@interface SBFolderIcon : SBIcon
+@property (nonatomic,readonly) SBFolder * folder;
+@end
+
 @interface SBIconLabelImageParameters : NSObject
 -(id)initWithParameters:(SBIconLabelImageParameters *)params;
 @end
 
 @interface CBIconLabelImageParameters : SBIconLabelImageParameters
-// @property (nonatomic, retain) SBFolderIcon *folderIcon;
-@property (nonatomic, retain) SBApplicationIcon *icon;
+@property (nonatomic, retain) SBIcon *folderIcon;
+@property (nonatomic, retain) SBIcon *icon;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
-// -(SBApplicationIcon *)mainIconForFolder:(SBIcon *)folderIcon;
+-(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
 @end
 
 @interface _UILegibilitySettings : NSObject
@@ -45,3 +53,15 @@
 @interface SBIconLabelView : _UILegibilityView
 -(void)updateIconLabelWithSettings:(id)arg1 imageParameters:(id)arg2;
 @end
+
+@interface SBIconListView : UIView
+-(NSArray *)icons;
+@end
+
+@interface SBDockIconListView : SBIconListView
+@end
+
+typedef struct SBIconCoordinate {
+    long long row;
+    long long col;
+} SBIconCoordinate;
