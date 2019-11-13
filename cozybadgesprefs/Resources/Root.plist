@@ -14,6 +14,7 @@
 
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>enabled</string>
@@ -26,6 +27,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>hideLabels</string>
@@ -37,6 +39,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>dockEnabled</string>
@@ -44,6 +47,7 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>dockHideLabels</string>
@@ -56,6 +60,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>backgroundEnabled</string>
@@ -65,6 +70,7 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>backgroundAutoColor</string>
@@ -85,6 +91,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>textEnabled</string>
@@ -94,6 +101,7 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>textAutoColor</string>
@@ -115,6 +123,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>nameEnabled</string>
@@ -145,11 +154,13 @@
         </dict>
         <dict>
 			<key>cell</key> 					<string>PSButtonCell</string>
+			<key>cellClass</key>                <string>CozBadButtonCell</string>
 			<key>action</key> 					<string>openReddit</string>
 			<key>label</key> 					<string>Reddit</string>
 		</dict>
 		<dict>
 			<key>cell</key> 					<string>PSButtonCell</string>
+			<key>cellClass</key>                <string>CozBadButtonCell</string>
 			<key>action</key> 					<string>openTwitter</string>
 			<key>label</key> 					<string>Twitter</string>
 		</dict>

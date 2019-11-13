@@ -11,11 +11,11 @@
 
 	<key>backgroundEnabled</key> 	<true/>
 	<key>backgroundAutoColor</key> 	<true/>
-	<key>backgroundColor</key> 		<string>#000000:1.00</string>
+	<key>backgroundColor</key> 		<string>#618fc7:1.00</string>
 
 	<key>textEnabled</key> 			<false/>
 	<key>textAutoColor</key> 		<false/>
-	<key>textColor</key> 			<string>#000000:1.00</string>
+	<key>textColor</key> 			<string>#618fc7:1.00</string>
 
 	<key>nameEnabled</key> 			<false/>
 	<key>nameSingular</key> 		<string></string>
