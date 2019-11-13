@@ -27,6 +27,7 @@
 @property (nonatomic, retain) SBIcon *icon;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
 -(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
+-(UIColor *)focusHighlightColor;
 @end
 
 @interface _UILegibilitySettings : NSObject
@@ -35,6 +36,7 @@
 @interface SBIconView : UIView
 @property (nonatomic,retain) SBIcon * icon;
 @property (nonatomic,retain) _UILegibilitySettings * legibilitySettings;
+@property (assign,getter=isLabelHidden,nonatomic) BOOL labelHidden;
 -(SBIconLabelImageParameters *)_labelImageParameters;
 @end
 
@@ -65,3 +67,6 @@ typedef struct SBIconCoordinate {
     long long row;
     long long col;
 } SBIconCoordinate;
+
+static BOOL getBool(NSString *key);
+static NSString* getValue(NSString *key);

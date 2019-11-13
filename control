@@ -1,7 +1,7 @@
 Package: com.noisyflake.cozybadges
 Name: CozyBadges
-Depends: firmware (>= 12.0), mobilesubstrate
-Version: 0.0.1
+Depends: firmware (>= 12.0), mobilesubstrate, org.thebigboss.libcolorpicker
+Version: 1.0.0
 Architecture: iphoneos-arm
 Description: Replace notification badges with sleek labels
 Maintainer: NoisyFlake

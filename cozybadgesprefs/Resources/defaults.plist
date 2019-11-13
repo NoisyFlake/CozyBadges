@@ -2,5 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>enabled</key> 				<true/>
+
+	<key>hideLabels</key> 			<false/>
+
+	<key>dockEnabled</key> 			<true/>
+	<key>dockHideLabels</key> 		<true/>
+
+	<key>backgroundEnabled</key> 	<true/>
+	<key>backgroundAutoColor</key> 	<true/>
+	<key>backgroundColor</key> 		<string>#000000:1.00</string>
+
+	<key>textEnabled</key> 			<false/>
+	<key>textAutoColor</key> 		<false/>
+	<key>textColor</key> 			<string>#000000:1.00</string>
+
+	<key>nameEnabled</key> 			<false/>
+	<key>nameSingular</key> 		<string></string>
+	<key>namePlural</key> 			<string></string>
 </dict>
 </plist>

@@ -2,7 +2,6 @@
 
 @implementation UIImage (CozyBadges)
 - (UIColor *)averageColor {
-
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     unsigned char rgba[4];
     CGContextRef context = CGBitmapContextCreate(rgba, 1, 1, 8, 4, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
@@ -57,5 +56,22 @@
                     green:((rgbValue & 0xFF00) >> 8) / 255.0
                     blue:(rgbValue & 0xFF) / 255.0
                     alpha:alpha];
+}
+
++(NSString *)hexStringFromColor:(UIColor *)color {
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+
+    CGFloat r = components[0];
+    CGFloat g = components[1];
+    CGFloat b = components[2];
+
+    return [NSString stringWithFormat:@"#%02X%02X%02X", (int)(r * 255), (int)(g * 255), (int)(b * 255)];
+}
+
+- (BOOL)isDarkColor {
+    const CGFloat *componentColors = CGColorGetComponents(self.CGColor);
+    CGFloat colorBrightness = ((componentColors[0] * 299) + (componentColors[1] * 587) + (componentColors[2] * 114)) / 1000;
+
+    return (colorBrightness < 0.65);
 }
 @end

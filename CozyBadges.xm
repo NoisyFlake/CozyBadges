@@ -42,25 +42,32 @@ NSMutableDictionary *prefs, *defaultPrefs;
 			frame.size = newImage.size;
 			[imageView setFrame:frame];
 
-			// Don't hide dock labels
+			// Hide or show label
 			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
-				labelView.hidden = NO;
+				if (self.labelHidden) {
+					// Checking labelHidden to see if this is a dock icon, because only dock icons do have labelHidden = true by default
+					labelView.hidden = !(getBool(@"dockEnabled") && (!getBool(@"dockHideLabels") || [[self icon] badgeValue] > 0));
+				} else {
+					labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
+				}
 			}
-
 		}
 
 		%orig;
-	}
 
-	-(BOOL)isLabelHidden {
-		return NO;
 	}
 
 	-(BOOL)allowsLabelArea {
+		// Allow labels in the dock
 		return YES;
 	}
 
+
 	-(void)_createAccessoryViewIfNecessary {
+		if (self.labelHidden && !getBool(@"dockEnabled")) {
+			%orig;
+		}
+
 		// Disable regular badges
 		return;
 	}
@@ -70,6 +77,8 @@ NSMutableDictionary *prefs, *defaultPrefs;
 
 	// Move icons in the dock up to make space for the labels
 	-(CGPoint)originForIconAtCoordinate:(SBIconCoordinate)arg1 metrics:(const id*)arg2 {
+		if (!getBool(@"dockEnabled")) return %orig;
+
 	    CGPoint point = %orig;
 	    NSArray *icons = [self icons];
 
@@ -77,7 +86,7 @@ NSMutableDictionary *prefs, *defaultPrefs;
 	    for(SBIcon *icon in icons) {
 	        if (count == arg1.col) {
 	            // This is the icon we are currently setting the origin for
-	            if ([icon badgeValue] > -1) {
+	            if (!getBool(@"dockHideLabels") || [icon badgeValue] > 0) {
 	                CGPoint newPoint = CGPointMake(point.x, point.y - 8);
 	                return newPoint;
 	            }
@@ -130,21 +139,64 @@ NSMutableDictionary *prefs, *defaultPrefs;
 	}
 
 	-(UIColor *)focusHighlightColor {
-		if ([self.icon badgeValue] > 0) {
-			SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-			UIColor *avgColor = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
-			return avgColor;
+		UIColor *color = %orig;
+
+		if([self.icon badgeValue] > 0) {
+
+			if (getBool(@"backgroundEnabled")) {
+				if (getBool(@"backgroundAutoColor")) {
+					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+					color = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
+				} else {
+					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
+				}
+			}
+
 		}
 
-		return %orig;
+		return color;
+	}
+
+	-(UIColor *)textColor {
+		UIColor *color = %orig;
+
+		if ([self.icon badgeValue] > 0) {
+
+			if (getBool(@"textEnabled")) {
+				if (getBool(@"textAutoColor")) {
+					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+					color = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
+				} else {
+					color = [UIColor RGBAColorFromHexString:getValue(@"textColor")];
+				}
+			} else if (getBool(@"backgroundEnabled")) {
+				color = [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
+			}
+
+		}
+
+		return color;
 	}
 
 	-(NSString *)text {
-		if ([self.icon badgeValue] > 0) {
-			return [NSString stringWithFormat:@"%lld Nachricht%@", [self.icon badgeValue], [self.icon badgeValue] > 1 ? @"en" : @""];
-		};
+		NSString *text = %orig;
 
-		return %orig;
+		if ([self.icon badgeValue] > 0) {
+
+			if (getBool(@"nameEnabled")) {
+				if ([self.icon badgeValue] > 1) {
+					text = [getValue(@"namePlural") length] > 0 ? getValue(@"namePlural") : @"@ Messages";
+				} else {
+					text = [getValue(@"nameSingular") length] > 0 ? getValue(@"nameSingular") : @"@ Message";
+				}
+
+				// Replace @ with the actual badgeValue
+				text = [text stringByReplacingOccurrencesOfString:@"@" withString:[NSString stringWithFormat:@"%lld", [self.icon badgeValue]]];
+			}
+
+		}
+
+		return text;
 	}
 
 %end
@@ -161,28 +213,26 @@ static BOOL getBool(NSString *key) {
 	return [ret boolValue];
 }
 
-// static NSString* getValue(NSString *key) {
-// 	return [prefs objectForKey:key] ?: [defaultPrefs objectForKey:key];
-// }
-
-static void loadPrefs() {
-	prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.noisyflake.cozybadgesprefs.plist"];
+static NSString* getValue(NSString *key) {
+	return [prefs objectForKey:key] ?: [defaultPrefs objectForKey:key];
 }
 
 static void initPrefs() {
 	// Copy the default preferences file when the actual preference file doesn't exist
 	NSString *path = @"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist";
 	NSString *pathDefault = @"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist";
+
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	if (![fileManager fileExistsAtPath:path]) {
 		[fileManager copyItemAtPath:pathDefault toPath:path error:nil];
 	}
+
+	prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
+	defaultPrefs = [[NSMutableDictionary alloc] initWithContentsOfFile:pathDefault];
 }
 
 %ctor {
 	initPrefs();
-	loadPrefs();
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPrefs, CFSTR("com.noisyflake.cozybadgesprefs/prefsupdated"), NULL, CFNotificationSuspensionBehaviorCoalesce);
 
 	if (getBool(@"enabled")) {
 		%init(_ungrouped);

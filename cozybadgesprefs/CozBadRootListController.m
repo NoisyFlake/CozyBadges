@@ -1,7 +1,24 @@
 #include "CozBadRootListController.h"
 #include "NSTask.h"
+#import <spawn.h>
+
+UIColor *originalTintColor = nil;
 
 @implementation CozBadRootListController
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    originalTintColor = self.navigationItem.navigationBar.tintColor;
+    self.navigationItem.navigationBar.tintColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
+
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    self.navigationItem.navigationBar.tintColor = originalTintColor;
+}
 
 - (NSArray *)specifiers {
 	if (!_specifiers) {
@@ -22,10 +39,64 @@
 	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:path atomically:YES];
-	CFStringRef notificationName = (CFStringRef)CFBridgingRetain(specifier.properties[@"PostNotification"]);
-	if (notificationName) {
-		CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, NULL, NULL, YES);
+
+	if (self.navigationItem.rightBarButtonItem == nil) {
+		UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Respring" style:UIBarButtonItemStylePlain target:self action:@selector(respring)];
+	    self.navigationItem.rightBarButtonItem = applyButton;
+
+	    self.navigationItem.rightBarButtonItem.tintColor = [UIColor redColor];
 	}
+}
+
+-(void)setBackgroundEnabled:(id)value specifier:(PSSpecifier *)specifier {
+    if([value boolValue]) {
+    	[self setPreferenceValue:@(NO) specifier:[self specifierForID:@"textEnabled"]];
+    }
+
+    [self setPreferenceValue:value specifier:specifier];
+    [self reloadSpecifierID:@"textEnabled" animated:YES];
+}
+
+-(void)setTextEnabled:(id)value specifier:(PSSpecifier *)specifier {
+    if([value boolValue]) {
+    	[self setPreferenceValue:@(NO) specifier:[self specifierForID:@"backgroundEnabled"]];
+    }
+
+    [self setPreferenceValue:value specifier:specifier];
+    [self reloadSpecifierID:@"backgroundEnabled" animated:YES];
+}
+
+-(void)_returnKeyPressed:(id)arg1 {
+	[self.view endEditing:YES];
+	[super _returnKeyPressed:arg1];
+}
+
+-(void)openReddit {
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"reddit:"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"reddit:///u/NoisyFlake"] options:@{} completionHandler:nil];
+    } else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"apollo:"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"apollo://www.reddit.com/u/NoisyFlake"] options:@{} completionHandler:nil];
+    } else {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.reddit.com/u/NoisyFlake"] options:@{} completionHandler:nil];
+    }
+}
+
+-(void)openTwitter {
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"tweetbot:///user_profile/NoisyFlake"] options:@{} completionHandler:nil];
+    } else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"twitterrific:///profile?screen_name=NoisyFlake"] options:@{} completionHandler:nil];
+    } else if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]]) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"twitter://user?screen_name=NoisyFlake"] options:@{} completionHandler:nil];
+    } else {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.twitter.com/NoisyFlake"] options:@{} completionHandler:nil];
+    }
+}
+
+-(void)respring {
+	pid_t pid;
+	const char* args[] = {"sbreload", NULL};
+	posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, (char* const*)args, NULL);
 }
 
 @end
@@ -41,7 +112,7 @@
 		CGRect backgroundFrame = CGRectMake(-50, -35, width+50, height);
 		UILabel *background = [[UILabel alloc] initWithFrame:backgroundFrame];
 		[background layoutIfNeeded];
-		background.backgroundColor = [UIColor colorWithRed:0.01 green:0.52 blue:0.99 alpha:1.0];
+		background.backgroundColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
 		background.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		[self addSubview:background];
 
