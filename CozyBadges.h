@@ -1,3 +1,11 @@
+@interface UIView (CozyBadges)
+-(id)_viewControllerForAncestor;
+@end
+
+@interface SBRootFolderController : NSObject
+-(id)dockIconListView;
+@end
+
 @interface SBIcon : NSObject
 -(BOOL)isFolderIcon;
 -(long long)badgeValue;
@@ -58,6 +66,7 @@
 
 @interface SBIconListView : UIView
 -(NSArray *)icons;
+-(void)setIconsNeedLayout;
 @end
 
 @interface SBDockIconListView : SBIconListView

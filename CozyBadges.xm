@@ -45,8 +45,17 @@ NSMutableDictionary *prefs, *defaultPrefs;
 			// Hide or show label
 			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
 				if (self.labelHidden) {
-					// Checking labelHidden to see if this is a dock icon, because only dock icons do have labelHidden = true by default
+					// This is a dock icon because only dock icons have labelHidden = true by default
 					labelView.hidden = !(getBool(@"dockEnabled") && (!getBool(@"dockHideLabels") || [[self icon] badgeValue] > 0));
+
+					if (getBool(@"dockEnabled") && getBool(@"dockHideLabels")) {
+						// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
+						SBRootFolderController *controller = [self _viewControllerForAncestor];
+						if ([controller isMemberOfClass:%c(SBRootFolderController)]) {
+							[[controller dockIconListView] setIconsNeedLayout];
+						}
+					}
+
 				} else {
 					labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
 				}
