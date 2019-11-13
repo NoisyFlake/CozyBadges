@@ -125,7 +125,7 @@ UIColor *originalTintColor = nil;
 		tweakName.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		tweakName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0f];
 		tweakName.textColor = [UIColor colorWithRed:1.00 green:1.00 blue:1.00 alpha:0.9];
-		tweakName.text = @"Cozy Badges";
+		tweakName.text = @"CozyBadges";
 		tweakName.textAlignment = NSTextAlignmentCenter;
 		[self addSubview:tweakName];
 
