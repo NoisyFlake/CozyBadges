@@ -44,8 +44,7 @@ NSMutableDictionary *prefs, *defaultPrefs;
 
 			// Hide or show label
 			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
-				if (self.labelHidden) {
-					// This is a dock icon because only dock icons have labelHidden = true by default
+				if ([self.location isEqual:@"SBIconLocationDock"]) {
 					labelView.hidden = !(getBool(@"dockEnabled") && (!getBool(@"dockHideLabels") || [[self icon] badgeValue] > 0));
 
 					if (getBool(@"dockEnabled") && getBool(@"dockHideLabels")) {
@@ -59,6 +58,9 @@ NSMutableDictionary *prefs, *defaultPrefs;
 				} else {
 					labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
 				}
+			} else {
+				// Always hide SBIconSimpleLabelViews as they are the duplicated dock labels
+				labelView.hidden = YES;
 			}
 		}
 
@@ -68,12 +70,16 @@ NSMutableDictionary *prefs, *defaultPrefs;
 
 	-(BOOL)allowsLabelArea {
 		// Allow labels in the dock
-		return YES;
+		if ([self.location isEqual:@"SBIconLocationDock"]) {
+			return YES;
+		}
+
+		return %orig;
 	}
 
 
 	-(void)_createAccessoryViewIfNecessary {
-		if (self.labelHidden && !getBool(@"dockEnabled")) {
+		if ([self.location isEqual:@"SBIconLocationDock"] && !getBool(@"dockEnabled")) {
 			%orig;
 		}
 
@@ -125,6 +131,8 @@ NSMutableDictionary *prefs, *defaultPrefs;
 
 	-(void)dealloc {
 		self.icon = nil;
+		self.folderIcon = nil;
+
 		%orig;
 	}
 
@@ -156,6 +164,11 @@ NSMutableDictionary *prefs, *defaultPrefs;
 				if (getBool(@"backgroundAutoColor")) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
 					color = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
+
+					// SBIconImageView *imageView = [self.iconView _iconImageView];
+					// UIImage *image = [imageView _generateSquareContentsImage];
+					// color = [image averageColor];
+
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
 				}
