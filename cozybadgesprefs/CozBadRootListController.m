@@ -54,7 +54,7 @@ UIColor *originalTintColor = nil;
     }
 
     [self setPreferenceValue:value specifier:specifier];
-    [self reloadSpecifierID:@"textEnabled" animated:YES];
+    [self reload];
 }
 
 -(void)setTextEnabled:(id)value specifier:(PSSpecifier *)specifier {
@@ -63,7 +63,7 @@ UIColor *originalTintColor = nil;
     }
 
     [self setPreferenceValue:value specifier:specifier];
-    [self reloadSpecifierID:@"backgroundEnabled" animated:YES];
+    [self reload];
 }
 
 -(void)_returnKeyPressed:(id)arg1 {

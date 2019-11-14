@@ -30,10 +30,37 @@ struct SBIconImageInfo imageInfo;
 		SBIconLabelImageParameters *params = [self _labelImageParameters];
 		SBIconLabelView *labelView = MSHookIvar<SBIconLabelView *>(self, "_labelView");
 
-		if(params != nil && labelView != nil) {
+		if(params == nil || labelView == nil) return %orig;
+
+		//Floating dock uses SimpleLabelViews for whatever reason
+		if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)] || [self.location isEqual:@"SBIconLocationFloatingDock"]) {
+
+			// Hide or show label
+			if (isIconInDock && getBool(@"dockEnabled")) {
+				labelView.hidden = (getBool(@"dockHideLabels") && [[self icon] badgeValue] <= 0);
+
+				// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
+				UIViewController *controller = [self _viewControllerForAncestor];
+				if ([controller isMemberOfClass:%c(SBRootFolderController)]) {
+					[[(SBRootFolderController *)controller dockIconListView] setIconsNeedLayout];
+				} else if ([controller isMemberOfClass:%c(SBFloatingDockViewController)]) {
+					[[(SBFloatingDockViewController *)controller currentIconListView] setIconsNeedLayout];
+				}
+
+			} else if (!isIconInDock) {
+				labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
+			}
+
+		} else {
+			// Hide SBIconSimpleLabelViews as they are the duplicated, nonsense dock labels
+			labelView.hidden = YES;
+		}
+
+		if (!labelView.hidden) {
 			// Apply legibility settings to the label if necessary
 			[labelView updateIconLabelWithSettings:settings imageParameters:params];
 
+			// Update the actual label so that it displays the desired information
 			SBIconLabelView *imageView = (SBIconLabelView *)([labelView respondsToSelector:@selector(imageView)] ? labelView.imageView : labelView);
 			SBIconLabelImage *newImage = [%c(SBIconLabelImage) imageWithParameters:params];
 			[imageView setImage:newImage];
@@ -42,35 +69,9 @@ struct SBIconImageInfo imageInfo;
 			CGRect frame = imageView.frame;
 			frame.size = newImage.size;
 			[imageView setFrame:frame];
-
-			// Hide or show label (Floating dock uses SimpleLabelViews for whatever reason)
-			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)] || [self.location isEqual:@"SBIconLocationFloatingDock"]) {
-
-				if (isIconInDock) {
-					labelView.hidden = !(getBool(@"dockEnabled") && (!getBool(@"dockHideLabels") || [[self icon] badgeValue] > 0));
-
-					if (getBool(@"dockEnabled") && getBool(@"dockHideLabels")) {
-						// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
-						UIViewController *controller = [self _viewControllerForAncestor];
-						if ([controller isMemberOfClass:%c(SBRootFolderController)]) {
-							[[(SBRootFolderController *)controller dockIconListView] setIconsNeedLayout];
-						} else if ([controller isMemberOfClass:%c(SBFloatingDockViewController)]) {
-							[[(SBFloatingDockViewController *)controller currentIconListView] setIconsNeedLayout];
-						}
-					}
-
-				} else {
-					labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
-				}
-
-			} else {
-				// Hide SBIconSimpleLabelViews as they are the duplicated dock labels
-				labelView.hidden = YES;
-			}
 		}
 
 		%orig;
-
 	}
 
 	-(BOOL)allowsLabelArea {
@@ -84,12 +85,8 @@ struct SBIconImageInfo imageInfo;
 
 
 	-(void)_createAccessoryViewIfNecessary {
-		if (isIconInDock && !getBool(@"dockEnabled")) {
-			%orig;
-		}
-
-		// Disable regular badges
-		return;
+		// Only show regular badges in the dock if desired
+		if (isIconInDock && !getBool(@"dockEnabled")) %orig;
 	}
 %end
 
