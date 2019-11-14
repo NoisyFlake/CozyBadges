@@ -1,9 +1,15 @@
+#define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"])
+
 @interface UIView (CozyBadges)
 -(id)_viewControllerForAncestor;
 @end
 
 @interface SBRootFolderController : NSObject
 -(id)dockIconListView;
+@end
+
+@interface SBFloatingDockViewController : NSObject
+-(id)currentIconListView;
 @end
 
 @interface SBIcon : NSObject

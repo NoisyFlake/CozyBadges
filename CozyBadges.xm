@@ -43,24 +43,28 @@ struct SBIconImageInfo imageInfo;
 			frame.size = newImage.size;
 			[imageView setFrame:frame];
 
-			// Hide or show label
-			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)]) {
-				if ([self.location isEqual:@"SBIconLocationDock"]) {
+			// Hide or show label (Floating dock uses SimpleLabelViews for whatever reason)
+			if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)] || [self.location isEqual:@"SBIconLocationFloatingDock"]) {
+
+				if (isIconInDock) {
 					labelView.hidden = !(getBool(@"dockEnabled") && (!getBool(@"dockHideLabels") || [[self icon] badgeValue] > 0));
 
 					if (getBool(@"dockEnabled") && getBool(@"dockHideLabels")) {
 						// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
-						SBRootFolderController *controller = [self _viewControllerForAncestor];
+						UIViewController *controller = [self _viewControllerForAncestor];
 						if ([controller isMemberOfClass:%c(SBRootFolderController)]) {
-							[[controller dockIconListView] setIconsNeedLayout];
+							[[(SBRootFolderController *)controller dockIconListView] setIconsNeedLayout];
+						} else if ([controller isMemberOfClass:%c(SBFloatingDockViewController)]) {
+							[[(SBFloatingDockViewController *)controller currentIconListView] setIconsNeedLayout];
 						}
 					}
 
 				} else {
 					labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
 				}
+
 			} else {
-				// Always hide SBIconSimpleLabelViews as they are the duplicated dock labels
+				// Hide SBIconSimpleLabelViews as they are the duplicated dock labels
 				labelView.hidden = YES;
 			}
 		}
@@ -71,7 +75,7 @@ struct SBIconImageInfo imageInfo;
 
 	-(BOOL)allowsLabelArea {
 		// Allow labels in the dock
-		if ([self.location isEqual:@"SBIconLocationDock"] && getBool(@"dockEnabled")) {
+		if (isIconInDock && getBool(@"dockEnabled")) {
 			return YES;
 		}
 
@@ -80,7 +84,7 @@ struct SBIconImageInfo imageInfo;
 
 
 	-(void)_createAccessoryViewIfNecessary {
-		if ([self.location isEqual:@"SBIconLocationDock"] && !getBool(@"dockEnabled")) {
+		if (isIconInDock && !getBool(@"dockEnabled")) {
 			%orig;
 		}
 
