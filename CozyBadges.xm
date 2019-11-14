@@ -13,6 +13,7 @@
 #import "CBColors.h"
 
 NSMutableDictionary *prefs, *defaultPrefs;
+struct SBIconImageInfo imageInfo;
 
 %hook SBIconView
 	-(SBIconLabelImageParameters *)_labelImageParameters {
@@ -70,7 +71,7 @@ NSMutableDictionary *prefs, *defaultPrefs;
 
 	-(BOOL)allowsLabelArea {
 		// Allow labels in the dock
-		if ([self.location isEqual:@"SBIconLocationDock"]) {
+		if ([self.location isEqual:@"SBIconLocationDock"] && getBool(@"dockEnabled")) {
 			return YES;
 		}
 
@@ -163,12 +164,7 @@ NSMutableDictionary *prefs, *defaultPrefs;
 			if (getBool(@"backgroundEnabled")) {
 				if (getBool(@"backgroundAutoColor")) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					color = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
-
-					// SBIconImageView *imageView = [self.iconView _iconImageView];
-					// UIImage *image = [imageView _generateSquareContentsImage];
-					// color = [image averageColor];
-
+					color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
 				}
@@ -187,7 +183,7 @@ NSMutableDictionary *prefs, *defaultPrefs;
 			if (getBool(@"textEnabled")) {
 				if (getBool(@"textAutoColor")) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					color = [[actualIcon unmaskedIconImageWithInfo:nil] averageColor];
+					color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"textColor")];
 				}
@@ -251,6 +247,11 @@ static void initPrefs() {
 
 	prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
 	defaultPrefs = [[NSMutableDictionary alloc] initWithContentsOfFile:pathDefault];
+
+	// Fill imageInfo - no idea what optionA or optionB is, but 2/0 seems to do the trick to get the desired image
+	imageInfo.size = CGSizeMake(30, 30);
+	imageInfo.optionA = 2;
+	imageInfo.optionB = 0;
 }
 
 %ctor {

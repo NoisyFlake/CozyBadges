@@ -9,7 +9,7 @@
 @interface SBIcon : NSObject
 -(BOOL)isFolderIcon;
 -(long long)badgeValue;
--(UIImage*)unmaskedIconImageWithInfo:(id)info;
+-(UIImage*)unmaskedIconImageWithInfo:(struct SBIconImageInfo)info;
 @end
 
 @interface SBLeafIcon : SBIcon
@@ -33,16 +33,11 @@
 @interface _UILegibilitySettings : NSObject
 @end
 
-@interface SBIconImageView : UIView
--(id)_generateSquareContentsImage;
-@end
-
 @interface SBIconView : UIView
 @property (nonatomic,retain) SBIcon * icon;
 @property (nonatomic,retain) _UILegibilitySettings * legibilitySettings;
 @property (nonatomic,copy) NSString * location;
 -(SBIconLabelImageParameters *)_labelImageParameters;
--(SBIconImageView *)_iconImageView;
 @end
 
 @interface CBIconLabelImageParameters : SBIconLabelImageParameters
@@ -81,6 +76,12 @@ typedef struct SBIconCoordinate {
     long long row;
     long long col;
 } SBIconCoordinate;
+
+typedef struct SBIconImageInfo {
+    CGSize size;
+    CGFloat optionA;
+    CGFloat optionB;
+} SBIconImageInfo;
 
 static BOOL getBool(NSString *key);
 static NSString* getValue(NSString *key);
