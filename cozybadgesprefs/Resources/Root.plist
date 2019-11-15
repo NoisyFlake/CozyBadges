@@ -51,6 +51,7 @@
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>dockHideLabels</string>
+			<key>id</key>						<string>dockHideLabels</string>
 			<key>label</key>					<string>Hide Dock Labels</string>
 		</dict>
 

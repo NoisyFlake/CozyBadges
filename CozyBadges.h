@@ -80,6 +80,10 @@
 @interface SBDockIconListView : SBIconListView
 @end
 
+@interface SBFloatingDockController : NSObject
++(BOOL)isFloatingDockSupported;
+@end
+
 typedef struct SBIconCoordinate {
     long long row;
     long long col;

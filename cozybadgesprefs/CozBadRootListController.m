@@ -25,6 +25,18 @@ UIColor *originalTintColor = nil;
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
 	}
 
+	// Remove dockHideLabels entry if FloatingDock is installed
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/FloatingDock.dylib"] || [fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/FloatingDockPlus.dylib"]) {
+		NSMutableArray *mutableArray = [_specifiers mutableCopy];
+		for (PSSpecifier *spec in _specifiers) {
+			if ([spec.properties[@"id"] isEqual:@"dockHideLabels"]) {
+				[mutableArray removeObject:spec];
+			}
+		}
+		_specifiers = mutableArray;
+	}
+
 	return _specifiers;
 }
 

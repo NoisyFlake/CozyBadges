@@ -226,6 +226,11 @@ struct SBIconImageInfo imageInfo;
 // ----- PREFERENCE HANDLING ----- //
 
 static BOOL getBool(NSString *key) {
+	// Prevent labels from always showing in FloatingDock which is not supported
+	if ([key isEqual:@"dockHideLabels"] && [%c(SBFloatingDockController) isFloatingDockSupported]) {
+		return YES;
+	}
+
 	id ret = [prefs objectForKey:key];
 
 	if(ret == nil) {
