@@ -65,6 +65,9 @@ struct SBIconImageInfo imageInfo;
 			SBIconLabelImage *newImage = [%c(SBIconLabelImage) imageWithParameters:params];
 			[imageView setImage:newImage];
 
+			// Disable the shadow behind the image that gets only drawn on respring
+			if ([labelView respondsToSelector:@selector(shadowImageView)]) labelView.shadowImageView.hidden = YES;
+
 			// Recalculate width of the label in case the text changed
 			CGRect frame = imageView.frame;
 			frame.size = newImage.size;

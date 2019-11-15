@@ -55,6 +55,8 @@
 @end
 
 @interface _UILegibilityView : UIView
+@property (nonatomic,retain) UIImageView * shadowImageView;
+@property (nonatomic,retain) UIImage * shadowImage;
 @property (nonatomic,retain) UIImageView * imageView;
 @property (nonatomic,retain) UIImage * image;
 @end
