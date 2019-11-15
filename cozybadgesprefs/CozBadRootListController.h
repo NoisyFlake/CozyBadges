@@ -8,5 +8,7 @@
 @interface CozBadRootListController : PSListController
 @end
 
-@interface CozBadLogo : PSTableCell
+@interface CozBadLogo : PSTableCell {
+	UILabel *version;
+}
 @end
