@@ -153,6 +153,7 @@ UIColor *originalTintColor = nil;
 		[self addSubview:version];
 
 		dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			NSString *versionString = @"Version unknown";
 			NSPipe *pipe = [NSPipe pipe];
 
 			NSTask *task = [[NSTask alloc] init];
@@ -168,24 +169,27 @@ UIColor *originalTintColor = nil;
 			[file closeFile];
 
 			if ([outputString containsString:@"com.noisyflake"]) {
-				NSArray *splitFirst = [outputString componentsSeparatedByString:@"com.noisyflake.cozybadges/now "];
-				NSString *line = [splitFirst objectAtIndex:1];
-				NSArray *splitSecond = [line componentsSeparatedByString:@" iphoneos"];
-				NSString *versionString = [splitSecond objectAtIndex:0];
+				NSArray *splitFirst = [outputString componentsSeparatedByString:@"/now "];
+				if ([splitFirst count] > 1) {
+					NSString *line = [splitFirst objectAtIndex:1];
+					NSArray *splitSecond = [line componentsSeparatedByString:@" iphoneos"];
+					if ([splitSecond count] > 1) {
+						versionString = [NSString stringWithFormat:@"Version %@", [splitSecond objectAtIndex:0]];
+					}
+				}
+			}
 
-				dispatch_async(dispatch_get_main_queue(), ^(void){
+			dispatch_async(dispatch_get_main_queue(), ^(void){
 					// Update label on the main queue
-			        version.text = [NSString stringWithFormat:@"Version %@", versionString];
-			        [UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+					version.text = versionString;
+					[UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 						version.alpha = 1;
 					} completion:nil];
-			    });
-
-			}
+				});
 		});
 
 	}
-    return self;
+	return self;
 }
 
 - (CGFloat)preferredHeightForWidth:(CGFloat)width {
