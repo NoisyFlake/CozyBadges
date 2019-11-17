@@ -13,6 +13,7 @@
 @end
 
 @interface SBIcon : NSObject
+@property (nonatomic,copy,readonly) NSString * applicationBundleID;
 -(BOOL)isFolderIcon;
 -(long long)badgeValue;
 -(UIImage*)unmaskedIconImageWithInfo:(struct SBIconImageInfo)info;

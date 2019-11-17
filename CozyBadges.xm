@@ -23,7 +23,7 @@ struct SBIconImageInfo imageInfo;
 		return params ? [[%c(CBIconLabelImageParameters) alloc] initWithParameters:params icon:[self icon]] : nil;
 	}
 
-	-(void)_updateAccessoryViewWithAnimation:(BOOL)arg1 {
+	-(void)layoutSubviews {
 		// Disable legibility settings for active labels (prevents iOS from darkening the label on a bright wallpaper)
 		_UILegibilitySettings* settings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
 
@@ -75,6 +75,7 @@ struct SBIconImageInfo imageInfo;
 		}
 
 		%orig;
+
 	}
 
 	-(BOOL)allowsLabelArea {
@@ -207,9 +208,17 @@ struct SBIconImageInfo imageInfo;
 
 			if (getBool(@"nameEnabled")) {
 				if ([self.icon badgeValue] > 1) {
-					text = [getValue(@"namePlural") length] > 0 ? getValue(@"namePlural") : @"@ Messages";
+					if ([getValue([NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]) length] > 0) {
+						text = getValue([NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]);
+					} else {
+						text = [getValue(@"namePlural") length] > 0 ? getValue(@"namePlural") : @"@ Messages";
+					}
 				} else {
-					text = [getValue(@"nameSingular") length] > 0 ? getValue(@"nameSingular") : @"@ Message";
+					if ([getValue([NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]) length] > 0) {
+						text = getValue([NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]);
+					} else {
+						text = [getValue(@"nameSingular") length] > 0 ? getValue(@"nameSingular") : @"@ Message";
+					}
 				}
 
 				// Replace @ with the actual badgeValue
@@ -268,6 +277,5 @@ static void initPrefs() {
 
 	if (getBool(@"enabled")) {
 		%init(_ungrouped);
-		HBLogWarn(@"----- CozyBadges loaded -----");
 	}
 }

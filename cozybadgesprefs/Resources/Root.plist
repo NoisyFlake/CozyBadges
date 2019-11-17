@@ -146,6 +146,13 @@
 			<key>key</key> 						<string>namePlural</string>
 			<key>label</key> 					<string>Plural:</string>
 		</dict>
+		<dict>
+			<key>cell</key> 					<string>PSLinkCell</string>
+			<key>cellClass</key>                <string>CozBadButtonCell</string>
+			<key>isController</key>             <true/>
+            <key>detail</key>                   <string>CozBadPerAppSettings</string>
+			<key>label</key> 					<string>Per-App Settings</string>
+		</dict>
 
 		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>

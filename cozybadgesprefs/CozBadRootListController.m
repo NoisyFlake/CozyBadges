@@ -12,6 +12,8 @@ UIColor *originalTintColor = nil;
     originalTintColor = self.navigationItem.navigationBar.tintColor;
     self.navigationItem.navigationBar.tintColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
 
+    UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Respring" style:UIBarButtonItemStylePlain target:self action:@selector(respring)];
+	self.navigationItem.rightBarButtonItem = applyButton;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -51,13 +53,6 @@ UIColor *originalTintColor = nil;
 	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:path atomically:YES];
-
-	if (self.navigationItem.rightBarButtonItem == nil) {
-		UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Respring" style:UIBarButtonItemStylePlain target:self action:@selector(respring)];
-	    self.navigationItem.rightBarButtonItem = applyButton;
-
-	    self.navigationItem.rightBarButtonItem.tintColor = [UIColor redColor];
-	}
 }
 
 -(void)setBackgroundEnabled:(id)value specifier:(PSSpecifier *)specifier {

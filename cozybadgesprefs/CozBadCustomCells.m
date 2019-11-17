@@ -23,3 +23,12 @@
 }
 
 @end
+
+@implementation CozBadGreyButtonCell
+
+-(void) layoutSubviews {
+	[super layoutSubviews];
+	[[self textLabel] setTextColor:[UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:0.4]];
+}
+
+@end

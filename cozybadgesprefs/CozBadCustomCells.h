@@ -13,3 +13,6 @@
 
 @interface CozBadButtonCell : PSTableCell
 @end
+
+@interface CozBadGreyButtonCell : PSTableCell
+@end
