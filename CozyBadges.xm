@@ -87,11 +87,15 @@ struct SBIconImageInfo imageInfo;
 		return %orig;
 	}
 
-
 	-(void)_createAccessoryViewIfNecessary {
 		// Only show regular badges in the dock if desired
 		if (isIconInDock && !getBool(@"dockEnabled")) %orig;
 	}
+
+	-(BOOL)allowsLabelAccessoryView {
+		return NO;
+	}
+
 %end
 
 %hook SBDockIconListView
