@@ -100,23 +100,23 @@ struct SBIconImageInfo imageInfo;
 	-(CGPoint)originForIconAtCoordinate:(SBIconCoordinate)arg1 metrics:(const id*)arg2 {
 		if (!getBool(@"dockEnabled")) return %orig;
 
-	    CGPoint point = %orig;
-	    NSArray *icons = [self icons];
+		CGPoint point = %orig;
+		NSArray *icons = [self icons];
 
-	    NSUInteger count = 1;
-	    for(SBIcon *icon in icons) {
-	        if (count == arg1.col) {
-	            // This is the icon we are currently setting the origin for
-	            if (!getBool(@"dockHideLabels") || [icon badgeValue] > 0) {
-	                CGPoint newPoint = CGPointMake(point.x, point.y - 8);
-	                return newPoint;
-	            }
-	        }
+		NSUInteger count = 1;
+		for(SBIcon *icon in icons) {
+			if (count == arg1.col) {
+				// This is the icon we are currently setting the origin for
+				if (!getBool(@"dockHideLabels") || [icon badgeValue] > 0) {
+					CGPoint newPoint = CGPointMake(point.x, point.y - 8);
+					return newPoint;
+				}
+			}
 
-	        count++;
-	    }
+			count++;
+		}
 
-	    return %orig;
+		return %orig;
 	}
 
 %end
@@ -124,10 +124,13 @@ struct SBIconImageInfo imageInfo;
 %subclass CBIconLabelImageParameters : SBIconLabelImageParameters
 	%property (nonatomic, retain) SBIcon *icon;
 	%property (nonatomic, retain) SBIcon *folderIcon;
+	%property (nonatomic, assign) BOOL hasNotification;
 
 	%new
 	-(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon {
 		self = [self initWithParameters:params];
+
+		self.hasNotification = (icon != nil && [[%c(SBIconController) sharedInstance] allowsBadgingForIcon:icon] && [icon badgeValue] > 0);
 
 		self.icon = icon;
 		self.folderIcon = [icon isFolderIcon] ? [self iconForFolder:icon] : nil;
@@ -138,23 +141,26 @@ struct SBIconImageInfo imageInfo;
 	-(void)dealloc {
 		self.icon = nil;
 		self.folderIcon = nil;
+		self.hasNotification = nil;
 
 		%orig;
 	}
 
 	%new
 	-(SBIcon *)iconForFolder:(SBFolderIcon *)folderIcon {
-	    SBIcon *ret = nil;
+		SBIcon *ret = nil;
 
-	    for(SBIcon *icon in [[folderIcon folder] allIcons]) {
-	        if(ret == nil) {
-	            ret = icon;
-	        } else if([icon badgeValue] > [ret badgeValue]) {
-	            ret = icon;
-	        }
-	    }
+		for(SBIcon *icon in [[folderIcon folder] allIcons]) {
+			if (![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:icon]) continue;
 
-	    return ret;
+			if(ret == nil) {
+				ret = icon;
+			} else if([icon badgeValue] > [ret badgeValue]) {
+				ret = icon;
+			}
+		}
+
+		return ret;
 	}
 
 	-(BOOL)isColorspaceGrayscale {
@@ -164,7 +170,7 @@ struct SBIconImageInfo imageInfo;
 	-(UIColor *)focusHighlightColor {
 		UIColor *color = %orig;
 
-		if([self.icon badgeValue] > 0) {
+		if(self.hasNotification) {
 
 			if (getBool(@"backgroundEnabled")) {
 				if (getBool(@"backgroundAutoColor")) {
@@ -183,7 +189,7 @@ struct SBIconImageInfo imageInfo;
 	-(UIColor *)textColor {
 		UIColor *color = %orig;
 
-		if ([self.icon badgeValue] > 0) {
+		if (self.hasNotification) {
 
 			if (getBool(@"textEnabled")) {
 				if (getBool(@"textAutoColor")) {
@@ -204,7 +210,7 @@ struct SBIconImageInfo imageInfo;
 	-(NSString *)text {
 		NSString *text = %orig;
 
-		if ([self.icon badgeValue] > 0) {
+		if (self.hasNotification) {
 
 			if (getBool(@"nameEnabled")) {
 				if ([self.icon badgeValue] > 1) {

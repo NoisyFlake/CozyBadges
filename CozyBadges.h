@@ -50,6 +50,7 @@
 @interface CBIconLabelImageParameters : SBIconLabelImageParameters
 @property (nonatomic, retain) SBIcon *folderIcon;
 @property (nonatomic, retain) SBIcon *icon;
+@property (nonatomic, assign) BOOL hasNotification;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
 -(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
 -(UIColor *)focusHighlightColor;
@@ -83,6 +84,11 @@
 
 @interface SBFloatingDockController : NSObject
 +(BOOL)isFloatingDockSupported;
+@end
+
+@interface SBIconController : UIViewController
++(id)sharedInstance;
+-(BOOL)allowsBadgingForIcon:(id)arg1 ;
 @end
 
 typedef struct SBIconCoordinate {
