@@ -37,7 +37,8 @@ struct SBIconImageInfo imageInfo;
 
 			// Hide or show label
 			if (isIconInDock && getBool(@"dockEnabled")) {
-				labelView.hidden = (getBool(@"dockHideLabels") && [[self icon] badgeValue] <= 0);
+				labelView.hidden = (getBool(@"dockHideLabels") &&
+					(![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:[self icon]] || [[self icon] badgeValue] <= 0));
 
 				// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
 				UIViewController *controller = [self _viewControllerForAncestor];
@@ -48,7 +49,8 @@ struct SBIconImageInfo imageInfo;
 				}
 
 			} else if (!isIconInDock) {
-				labelView.hidden = (getBool(@"hideLabels") && [[self icon] badgeValue] <= 0);
+				labelView.hidden = (getBool(@"hideLabels") &&
+					(![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:[self icon]] || [[self icon] badgeValue] <= 0));
 			}
 
 		} else {
@@ -111,7 +113,8 @@ struct SBIconImageInfo imageInfo;
 		for(SBIcon *icon in icons) {
 			if (count == arg1.col) {
 				// This is the icon we are currently setting the origin for
-				if (!getBool(@"dockHideLabels") || [icon badgeValue] > 0) {
+				if (!getBool(@"dockHideLabels") ||
+					([[%c(SBIconController) sharedInstance] allowsBadgingForIcon:icon] && [icon badgeValue] > 0)) {
 					CGPoint newPoint = CGPointMake(point.x, point.y - 8);
 					return newPoint;
 				}
