@@ -1,5 +1,10 @@
 #define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"])
 
+@interface ColorBadges : NSObject
++ (instancetype)sharedInstance;
+- (int)colorForIcon:(id)icon;
+@end
+
 @interface UIView (CozyBadges)
 -(id)_viewControllerForAncestor;
 @end

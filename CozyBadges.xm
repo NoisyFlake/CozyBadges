@@ -15,6 +15,8 @@
 NSMutableDictionary *prefs, *defaultPrefs;
 struct SBIconImageInfo imageInfo;
 
+BOOL isColorBadgesAvailable;
+
 %hook SBIconView
 	-(SBIconLabelImageParameters *)_labelImageParameters {
 		SBIconLabelImageParameters *params = %orig;
@@ -182,7 +184,12 @@ struct SBIconImageInfo imageInfo;
 			if (getBool(@"backgroundEnabled")) {
 				if (getBool(@"backgroundAutoColor")) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+					if (isColorBadgesAvailable) {
+						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
+						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
+					} else {
+						color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+					}
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
 				}
@@ -201,7 +208,12 @@ struct SBIconImageInfo imageInfo;
 			if (getBool(@"textEnabled")) {
 				if (getBool(@"textAutoColor")) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+					if (isColorBadgesAvailable) {
+						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
+						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
+					} else {
+						color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+					}
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"textColor")];
 				}
@@ -283,6 +295,13 @@ static void initPrefs() {
 	imageInfo.size = CGSizeMake(30, 30);
 	imageInfo.optionA = 2;
 	imageInfo.optionB = 0;
+
+	if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/ColorBadges.dylib"]) {
+		isColorBadgesAvailable = YES;
+		dlopen("/Library/MobileSubstrate/DynamicLibraries/ColorBadges.dylib", RTLD_LAZY);
+	} else {
+		isColorBadgesAvailable = NO;
+	}
 }
 
 %ctor {
