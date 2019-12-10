@@ -144,16 +144,16 @@ UIColor *originalTintColor = nil;
 		version.textColor = [UIColor colorWithRed:1.00 green:1.00 blue:1.00 alpha:0.5];
 		version.backgroundColor = [UIColor clearColor];
 		version.textAlignment = NSTextAlignmentCenter;
+		version.text = @"Version unknown";
 		version.alpha = 0;
 		[self addSubview:version];
 
 		dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			NSString *versionString = @"Version unknown";
 			NSPipe *pipe = [NSPipe pipe];
 
 			NSTask *task = [[NSTask alloc] init];
-			task.arguments = @[@"list", @"com.noisyflake.cozybadges"];
-			task.launchPath = @"/usr/bin/apt";
+			task.arguments = @[@"-c", @"dpkg -s com.noisyflake.cozybadges | grep -i version | cut -d' ' -f2"];
+			task.launchPath = @"/bin/sh";
 			[task setStandardOutput: pipe];
 			[task launch];
 			[task waitUntilExit];
@@ -163,24 +163,16 @@ UIColor *originalTintColor = nil;
 			NSString *outputString = [[NSString alloc] initWithData:output encoding:NSUTF8StringEncoding];
 			[file closeFile];
 
-			if ([outputString containsString:@"com.noisyflake"]) {
-				NSArray *splitFirst = [outputString componentsSeparatedByString:@"/now "];
-				if ([splitFirst count] > 1) {
-					NSString *line = [splitFirst objectAtIndex:1];
-					NSArray *splitSecond = [line componentsSeparatedByString:@" iphoneos"];
-					if ([splitSecond count] > 1) {
-						versionString = [NSString stringWithFormat:@"Version %@", [splitSecond objectAtIndex:0]];
-					}
-				}
-			}
-
 			dispatch_async(dispatch_get_main_queue(), ^(void){
-					// Update label on the main queue
-					version.text = versionString;
-					[UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-						version.alpha = 1;
-					} completion:nil];
-				});
+				// Update label on the main queue
+				if ([outputString length] > 0) {
+					version.text = [NSString stringWithFormat:@"Version %@", outputString];
+				}
+
+				[UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+					version.alpha = 1;
+				} completion:nil];
+			});
 		});
 
 	}
