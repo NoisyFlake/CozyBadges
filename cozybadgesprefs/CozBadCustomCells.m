@@ -19,7 +19,7 @@
 
 -(void) layoutSubviews {
 	[super layoutSubviews];
-	[[self textLabel] setTextColor:[UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0]];
+	[[self textLabel] setTextColor:UIColor.labelColor];
 }
 
 @end
@@ -28,7 +28,7 @@
 
 -(void) layoutSubviews {
 	[super layoutSubviews];
-	[[self textLabel] setTextColor:[UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:0.4]];
+	[[self textLabel] setTextColor:UIColor.systemGrayColor];
 }
 
 @end

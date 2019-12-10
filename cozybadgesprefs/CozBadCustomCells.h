@@ -1,5 +1,10 @@
 #import <Preferences/PSTableCell.h>
 
+@interface UIColor (CozyBadges)
+@property(class, nonatomic, readonly) UIColor *labelColor;
+@property(class, nonatomic, readonly) UIColor *systemGrayColor;
+@end
+
 @interface PSControlTableCell : PSTableCell
 @property (nonatomic, retain) UIControl *control;
 @end
