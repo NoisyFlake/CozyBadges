@@ -17,6 +17,24 @@ struct SBIconImageInfo imageInfo;
 
 BOOL isColorBadgesAvailable;
 
+%hook SBIconSimpleLabelView
+	-(void)setFrame:(CGRect)frame {
+		bool isInDock = [self.iconView.location isEqual:@"SBIconLocationDock"] || [self.iconView.location isEqual:@"SBIconLocationFloatingDock"];
+		frame.origin.y += [getValue(isInDock ? @"labelOffsetDock" : @"labelOffset") floatValue];
+
+		%orig;
+	}
+%end
+
+%hook SBIconLegibilityLabelView
+	-(void)setFrame:(CGRect)frame {
+		bool isInDock = [self.iconView.location isEqual:@"SBIconLocationDock"] || [self.iconView.location isEqual:@"SBIconLocationFloatingDock"];
+		frame.origin.y += [getValue(isInDock ? @"labelOffsetDock" : @"labelOffset") floatValue];
+
+		%orig;
+	}
+%end
+
 %hook SBIconView
 	-(SBIconLabelImageParameters *)_labelImageParameters {
 		SBIconLabelImageParameters *params = %orig;
@@ -30,7 +48,7 @@ BOOL isColorBadgesAvailable;
 		_UILegibilitySettings* settings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
 
 		SBIconLabelImageParameters *params = [self _labelImageParameters];
-		SBIconLabelView *labelView = MSHookIvar<SBIconLabelView *>(self, "_labelView");
+		SBIconLabelView *labelView = self.labelView;
 
 		if(params == nil || labelView == nil) return %orig;
 
@@ -109,23 +127,9 @@ BOOL isColorBadgesAvailable;
 		if (!getBool(@"dockEnabled")) return %orig;
 
 		CGPoint point = %orig;
-		NSArray *icons = [self icons];
+		CGPoint newPoint = CGPointMake(point.x, point.y - 8);
 
-		NSUInteger count = 1;
-		for(SBIcon *icon in icons) {
-			if (count == arg1.col) {
-				// This is the icon we are currently setting the origin for
-				if (!getBool(@"dockHideLabels") ||
-					([[%c(SBIconController) sharedInstance] allowsBadgingForIcon:icon] && [icon badgeValue] > 0)) {
-					CGPoint newPoint = CGPointMake(point.x, point.y - 8);
-					return newPoint;
-				}
-			}
-
-			count++;
-		}
-
-		return %orig;
+		return newPoint;
 	}
 
 %end

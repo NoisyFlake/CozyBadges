@@ -1,15 +1,13 @@
-#import "CozBadPerAppSettings.h"
+#include "CozyHeaders.h"
 
-@implementation CozBadPerAppSettings
+@implementation CozyPerAppSettings
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    self.navigationItem.navigationBar.tintColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
-
 	UIBarButtonItem *applyButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)];
     self.navigationItem.rightBarButtonItem = applyButton;
-    self.navigationItem.rightBarButtonItem.tintColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
+    // self.navigationItem.rightBarButtonItem.tintColor = [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0];
 }
 
 - (NSArray *)specifiers {
@@ -51,21 +49,6 @@
 	}
 
 	return _specifiers;
-}
-
-- (id)readPreferenceValue:(PSSpecifier*)specifier {
-	NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
-	NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:path];
-	return (settings[specifier.properties[@"key"]]) ?: specifier.properties[@"default"];
-}
-
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-	NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
-	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
-	HBLogWarn(@"Setter called: %@ %@", path, value);
-
-	[settings setObject:value forKey:specifier.properties[@"key"]];
-	[settings writeToFile:path atomically:YES];
 }
 
 - (BOOL)isValueSet:(NSString *)key {
@@ -127,11 +110,10 @@
 
 	[specifier setProperty:key forKey:@"key"];
 	[specifier setProperty:@"com.noisyflake.cozybadges" forKey:@"defaults"];
+	[specifier setProperty:NSClassFromString(@"CozyButton") forKey:@"cellClass"];
 
-	if ([self isValueSet:key]) {
-		[specifier setProperty:NSClassFromString(@"CozBadButtonCell") forKey:@"cellClass"];
-	} else {
-		[specifier setProperty:NSClassFromString(@"CozBadGreyButtonCell") forKey:@"cellClass"];
+	if (![self isValueSet:key]) {
+		[specifier setProperty:@"disabled" forKey:@"style"];
 	}
 
 	specifier.buttonAction = @selector(loadInputFields:);

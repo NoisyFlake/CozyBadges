@@ -1,4 +1,10 @@
-#define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"])
+#define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"] || [self.location isEqual:@"SBIconLocationFloatingDockSuggestions"])
+
+#ifdef DEBUG
+#define NSLog(fmt, ...) NSLog((@"[CozyBadges] [%s:%d] " fmt), __FILE__, __LINE__, ##__VA_ARGS__)
+#else
+#define NSLog(fmt, ...)
+#endif
 
 @interface ColorBadges : NSObject
 + (instancetype)sharedInstance;
@@ -45,11 +51,31 @@
 @interface _UILegibilitySettings : NSObject
 @end
 
+@interface _UILegibilityView : UIView
+@property (nonatomic,retain) UIImageView * shadowImageView;
+@property (nonatomic,retain) UIImage * shadowImage;
+@property (nonatomic,retain) UIImageView * imageView;
+@property (nonatomic,retain) UIImage * image;
+@end
+
+@interface SBIconLabelView : _UILegibilityView
+-(void)updateIconLabelWithSettings:(id)arg1 imageParameters:(id)arg2;
+@end
+
 @interface SBIconView : UIView
 @property (nonatomic,retain) SBIcon * icon;
 @property (nonatomic,retain) _UILegibilitySettings * legibilitySettings;
 @property (nonatomic,copy) NSString * location;
+@property (nonatomic, retain) SBIconLabelView *labelView;
 -(SBIconLabelImageParameters *)_labelImageParameters;
+@end
+
+@interface SBIconLegibilityLabelView : _UILegibilityView
+@property (assign,nonatomic) SBIconView * iconView;
+@end
+
+@interface SBIconSimpleLabelView : UIImageView
+@property (assign,nonatomic) SBIconView * iconView;
 @end
 
 @interface CBIconLabelImageParameters : SBIconLabelImageParameters
@@ -61,22 +87,11 @@
 -(UIColor *)focusHighlightColor;
 @end
 
-@interface _UILegibilityView : UIView
-@property (nonatomic,retain) UIImageView * shadowImageView;
-@property (nonatomic,retain) UIImage * shadowImage;
-@property (nonatomic,retain) UIImageView * imageView;
-@property (nonatomic,retain) UIImage * image;
-@end
-
 @interface SBIconLabelImage : UIImage
 @end
 
 @interface SBIconLabelImage (CozyBadges)
 +(id)imageWithParameters:(id)arg1;
-@end
-
-@interface SBIconLabelView : _UILegibilityView
--(void)updateIconLabelWithSettings:(id)arg1 imageParameters:(id)arg2;
 @end
 
 @interface SBIconListView : UIView

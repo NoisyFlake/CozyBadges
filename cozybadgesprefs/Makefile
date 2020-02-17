@@ -8,7 +8,7 @@ include $(THEOS)/makefiles/common.mk
 
 BUNDLE_NAME = CozyBadgesPrefs
 
-$(BUNDLE_NAME)_FILES = ../CBColors.m CozBadRootListController.m CozBadColorPickerCell.m CozBadCustomCells.m CozBadPerAppSettings.xm
+$(BUNDLE_NAME)_FILES =  ../CBColors.m $(wildcard *.m *.xm CustomCells/*.m)
 $(BUNDLE_NAME)_INSTALL_PATH = /Library/PreferenceBundles
 $(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences

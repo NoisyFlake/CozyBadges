@@ -1,10 +1,10 @@
-#import "../CBColors.h"
+#include "../CozyHeaders.h"
+
+#import "../../CBColors.h"
 #import <libcolorpicker.h>
 #import <Preferences/PSSpecifier.h>
 
-#import "CozBadColorPickerCell.h"
-
-@interface CozBadColorPickerCell ()
+@interface CozyColorPickerCell ()
 
 @property (nonatomic, retain) UIView *colorPreview;
 
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation CozBadColorPickerCell
+@implementation CozyColorPickerCell
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier specifier:(PSSpecifier *)specifier {
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier specifier:specifier];

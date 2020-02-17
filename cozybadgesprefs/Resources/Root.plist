@@ -6,7 +6,7 @@
 	<array>
 		<dict>
 			<key>cell</key>						<string>PSGroupCell</string>
-			<key>footerCellClass</key>			<string>CozBadLogo</string>
+			<key>headerCellClass</key>			<string>CozBadLogo</string>
  		</dict>
  		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
@@ -14,7 +14,7 @@
 
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>enabled</string>
@@ -23,23 +23,35 @@
 		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
             <key>label</key>                    <string>General Options</string>
-            <key>footerText</key>               <string>This hides labels from icons that don't have any notifications. If you're using another tweak to hide labels, you have to disable this option in the other tweak.</string>
+			<key>footerText</key>				<string>Label Offset - Moves the labels up or down.</string>
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>hideLabels</string>
 			<key>label</key>					<string>Hide Labels</string>
 		</dict>
 		<dict>
+			<key>cell</key>						<string>PSSliderCell</string>
+			<key>cellClass</key>                <string>CozySlider</string>
+			<key>min</key>                      <real>-30</real>
+			<key>max</key>						<real>30</real>
+			<key>showValue</key>				<true/>
+			<key>default</key>					<real>0</real>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>labelOffset</string>
+		</dict>
+
+		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
-            <key>footerText</key>               <string>When this option is enabled, icons with notifications will be moved up to make room for the label.</string>
+			<key>label</key>					<string>Dock Options</string>
+            <key>footerText</key>				<string>Dock Label Offset - Moves the dock labels up or down.</string>
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>dockEnabled</string>
@@ -47,12 +59,22 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>dockHideLabels</string>
 			<key>id</key>						<string>dockHideLabels</string>
 			<key>label</key>					<string>Hide Dock Labels</string>
+		</dict>
+		<dict>
+			<key>cell</key>						<string>PSSliderCell</string>
+			<key>cellClass</key>                <string>CozySlider</string>
+			<key>min</key>                      <real>-30</real>
+			<key>max</key>						<real>30</real>
+			<key>showValue</key>				<true/>
+			<key>default</key>					<real>0</real>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>labelOffsetDock</string>
 		</dict>
 
 		<dict>
@@ -61,7 +83,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>backgroundEnabled</string>
@@ -71,7 +93,7 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>backgroundAutoColor</string>
@@ -79,7 +101,7 @@
 		</dict>
 		<dict>
             <key>cell</key>                     <string>PSLinkCell</string>
-            <key>cellClass</key>                <string>CozBadColorPickerCell</string>
+            <key>cellClass</key>                <string>CozyColorPickerCell</string>
             <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
             <key>key</key>                      <string>backgroundColor</string>
             <key>alpha</key>                    <true/>
@@ -92,7 +114,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>textEnabled</string>
@@ -102,7 +124,7 @@
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>textAutoColor</string>
@@ -110,7 +132,7 @@
 		</dict>
 		<dict>
             <key>cell</key>                     <string>PSLinkCell</string>
-            <key>cellClass</key>                <string>CozBadColorPickerCell</string>
+            <key>cellClass</key>                <string>CozyColorPickerCell</string>
             <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
             <key>key</key>                      <string>textColor</string>
             <key>alpha</key>                    <true/>
@@ -124,7 +146,7 @@
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozBadSwitchTableCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
 			<key>default</key>					<false/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
 			<key>key</key>						<string>nameEnabled</string>
@@ -148,30 +170,17 @@
 		</dict>
 		<dict>
 			<key>cell</key> 					<string>PSLinkCell</string>
-			<key>cellClass</key>                <string>CozBadButtonCell</string>
+			<key>cellClass</key>                <string>CozyButton</string>
 			<key>isController</key>             <true/>
-            <key>detail</key>                   <string>CozBadPerAppSettings</string>
+            <key>detail</key>                   <string>CozyPerAppSettings</string>
 			<key>label</key> 					<string>Per-App Settings</string>
 		</dict>
 
 		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
-            <key>label</key>                    <string>Support</string>
             <key>footerText</key> 				<string>Developed with ♥ by NoisyFlake</string>
 			<key>footerAlignment</key> 			<string>1</string>
         </dict>
-        <dict>
-			<key>cell</key> 					<string>PSButtonCell</string>
-			<key>cellClass</key>                <string>CozBadButtonCell</string>
-			<key>action</key> 					<string>openReddit</string>
-			<key>label</key> 					<string>Reddit</string>
-		</dict>
-		<dict>
-			<key>cell</key> 					<string>PSButtonCell</string>
-			<key>cellClass</key>                <string>CozBadButtonCell</string>
-			<key>action</key> 					<string>openTwitter</string>
-			<key>label</key> 					<string>Twitter</string>
-		</dict>
 
 	</array>
 	<key>title</key>

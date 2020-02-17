@@ -5,6 +5,8 @@
 	<key>enabled</key> 				<true/>
 
 	<key>hideLabels</key> 			<false/>
+	<key>labelOffset</key> 			<real>0</real>
+	<key>labelOffsetDock</key> 		<real>0</real>
 
 	<key>dockEnabled</key> 			<true/>
 	<key>dockHideLabels</key> 		<true/>
