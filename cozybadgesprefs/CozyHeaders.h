@@ -1,7 +1,7 @@
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
 
-#define kCOZYCOLOR [UIColor colorWithRed:0.38 green:0.56 blue:0.76 alpha:1.0]
+#define kCOZYCOLOR [UIColor colorWithRed:0.58 green:0.44 blue:0.75 alpha:1.0]
 
 @interface NSTask : NSObject
 - (instancetype)init;
@@ -55,9 +55,4 @@
 @end
 
 @interface CozyColorPickerCell : PSTableCell
-@end
-
-@interface CozBadLogo : PSTableCell {
-	UILabel *version;
-}
 @end
