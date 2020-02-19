@@ -4,8 +4,6 @@
 
 @interface UIImage (CozyBadges)
 - (UIColor *)averageColor;
--(float)contrastValueFor:(Colour *)a andB:(Colour *)b;
--(float)saturationValueFor:(Colour *)a andB:(Colour *)b;
 -(int)colourDistance:(Colour *)a andB:(Colour *)b;
 @end
 
