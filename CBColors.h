@@ -1,10 +1,10 @@
-@interface Colour : NSObject
+@interface RGBPixel : NSObject
 @property int r, g, b, d;
 @end
 
 @interface UIImage (CozyBadges)
 - (UIColor *)averageColor;
--(int)colourDistance:(Colour *)a andB:(Colour *)b;
+-(int)colourDistance:(RGBPixel *)a andB:(RGBPixel *)b;
 @end
 
 @interface UIColor (CozyBadges)

@@ -1,71 +1,87 @@
 #import "CBColors.h"
 
-@implementation Colour
+@implementation RGBPixel
 @end
 
 @implementation UIImage (CozyBadges)
 - (UIColor *)averageColor {
-    NSLog(@"start");
 
-    float dimension = self.size.width / 2;
-    int tolerance = 8;
-    int minAlpha = 255;
+    int width = self.size.width;
+    int height = self.size.height;
+
+    int limit = 2000;
+
+    if (width * height > limit) {
+        float ratio = width / height;
+        float maxWidth = sqrtf(ratio * limit);
+
+        width = (int)maxWidth;
+        height = (int)(limit / maxWidth);
+    }
+
+    int tolerance = 27;
 
     CGImageRef imageRef = [self CGImage];
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    unsigned char *rawData = (unsigned char*) calloc(dimension * dimension * 4, sizeof(unsigned char));
-    NSUInteger bytesPerPixel = 4;
-    NSUInteger bytesPerRow = bytesPerPixel * dimension;
+
     NSUInteger bitsPerComponent = 8;
-    CGContextRef context = CGBitmapContextCreate(rawData, dimension, dimension, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+
+    unsigned char *rawData = calloc(bytesPerRow * height, sizeof(unsigned char));
+
+    CGContextRef context = CGBitmapContextCreate(rawData, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(colorSpace);
-    CGContextDrawImage(context, CGRectMake(0, 0, dimension, dimension), imageRef);
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
     CGContextRelease(context);
 
-    NSMutableArray * colours = [NSMutableArray new];
-    float x = 0, y = 0; //used to set coordinates
-    for (int n = 0; n<(dimension*dimension); n++){
 
-        int i = (bytesPerRow * y) + x * bytesPerPixel; //pull index
+    NSMutableArray *imageColors = [NSMutableArray new];
 
-        // Ignore transparent pixels
-        if (rawData[i + 3] >= minAlpha) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
 
-            Colour * c = [Colour new];
-            c.r = rawData[i];
-            c.g = rawData[i + 1];
-            c.b = rawData[i + 2];
+            int i = (bytesPerRow * y) + x * bytesPerPixel;
 
-            bool colorExists = false;
-            for (Colour *color in colours) {
-                int distance = [self colourDistance:c andB:color];
+            if (rawData[i + 3] < 128) continue;
+
+            RGBPixel *pixel = [RGBPixel new];
+            pixel.r = rawData[i];
+            pixel.g = rawData[i + 1];
+            pixel.b = rawData[i + 2];
+
+            BOOL colorExists = false;
+            for (RGBPixel *color in imageColors) {
+                int distance = [self colourDistance:pixel andB:color];
 
                 if (distance < tolerance) {
-                    color.d+= distance;
-
                     colorExists = true;
+
+                    color.r = (int) ((color.r + pixel.r) / 2);
+                    color.g = (int) ((color.g + pixel.g) / 2);
+                    color.b = (int) ((color.b + pixel.b) / 2);
+                    color.d+= distance > 0 ? distance : 1;
+
+                    break;
                 }
             }
 
-            if (!colorExists) [colours addObject:c];
+            if (!colorExists) [imageColors addObject:pixel];
+
         }
-
-        //update pixel coordinate
-        x = (x == dimension - 1) ? 0 : x+1;
-        y = (x == 0) ? y+1 : y;
-
     }
+
     free(rawData);
 
-    if (colours.count == 0) return [UIColor clearColor];
+    if (imageColors.count == 0) return [UIColor redColor];
 
-    NSArray * sorted = [[NSArray arrayWithArray:colours] sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"d" ascending:false]]];
+    NSArray *sorted = [[NSArray arrayWithArray:imageColors] sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"d" ascending:false]]];
+    RGBPixel *mostDominant = sorted[0];
 
-    Colour *mostDominant = sorted[0];
     return [UIColor colorWithRed:mostDominant.r/255.0f green:mostDominant.g/255.0f blue:mostDominant.b/255.0f alpha:1.0f];
 }
 
--(int)colourDistance:(Colour *)a andB:(Colour *)b {
+-(int)colourDistance:(RGBPixel *)a andB:(RGBPixel *)b {
     return abs(a.r-b.r)+abs(a.g-b.g)+abs(a.b-b.b);
 }
 @end
