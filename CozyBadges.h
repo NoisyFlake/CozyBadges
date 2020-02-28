@@ -1,11 +1,5 @@
 #define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"] || [self.location isEqual:@"SBIconLocationFloatingDockSuggestions"])
 
-#ifdef DEBUG
-#define NSLog(fmt, ...) NSLog((@"[CozyBadges] [%s:%d] " fmt), __FILE__, __LINE__, ##__VA_ARGS__)
-#else
-#define NSLog(fmt, ...)
-#endif
-
 @interface ColorBadges : NSObject
 + (instancetype)sharedInstance;
 - (int)colorForIcon:(id)icon;
@@ -82,6 +76,7 @@
 @property (nonatomic, retain) SBIcon *folderIcon;
 @property (nonatomic, retain) SBIcon *icon;
 @property (nonatomic, assign) BOOL hasNotification;
+@property (nonatomic, retain) UIColor *dominantColor;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
 -(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
 -(UIColor *)focusHighlightColor;

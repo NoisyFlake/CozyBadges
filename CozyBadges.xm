@@ -9,6 +9,7 @@
 
 */
 
+#import "NSLog.h"
 #import "CozyBadges.h"
 #import "CBColors.h"
 
@@ -138,6 +139,7 @@ BOOL isColorBadgesAvailable;
 	%property (nonatomic, retain) SBIcon *icon;
 	%property (nonatomic, retain) SBIcon *folderIcon;
 	%property (nonatomic, assign) BOOL hasNotification;
+	%property (nonatomic, retain) UIColor *dominantColor;
 
 	%new
 	-(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon {
@@ -147,6 +149,7 @@ BOOL isColorBadgesAvailable;
 
 		self.icon = icon;
 		self.folderIcon = [icon isFolderIcon] ? [self iconForFolder:icon] : nil;
+		self.dominantColor = nil;
 
 		return self;
 	}
@@ -192,7 +195,10 @@ BOOL isColorBadgesAvailable;
 						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
 						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
 					} else {
-						color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+						if (!self.dominantColor) {
+							self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+						}
+						color = self.dominantColor;
 					}
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
@@ -216,7 +222,10 @@ BOOL isColorBadgesAvailable;
 						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
 						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
 					} else {
-						color = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+						if (!self.dominantColor) {
+							self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+						}
+						color = self.dominantColor;
 					}
 				} else {
 					color = [UIColor RGBAColorFromHexString:getValue(@"textColor")];

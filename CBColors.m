@@ -1,3 +1,4 @@
+#import "NSLog.h"
 #import "CBColors.h"
 
 @implementation RGBPixel
@@ -60,7 +61,8 @@
                     color.r = (int) ((color.r + pixel.r) / 2);
                     color.g = (int) ((color.g + pixel.g) / 2);
                     color.b = (int) ((color.b + pixel.b) / 2);
-                    color.d+= distance > 0 ? distance : 1;
+                    // color.d+= distance > 0 ? distance : 1;
+                    color.d++;
 
                     break;
                 }
@@ -73,12 +75,28 @@
 
     free(rawData);
 
-    if (imageColors.count == 0) return [UIColor redColor];
+    if (imageColors.count < 2) return [UIColor redColor];
 
     NSArray *sorted = [[NSArray arrayWithArray:imageColors] sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"d" ascending:false]]];
-    RGBPixel *mostDominant = sorted[0];
 
-    return [UIColor colorWithRed:mostDominant.r/255.0f green:mostDominant.g/255.0f blue:mostDominant.b/255.0f alpha:1.0f];
+    RGBPixel *pixel1 = sorted[0];
+    RGBPixel *pixel2 = sorted[1];
+
+    CGFloat sat1, br1;
+    UIColor *color1 = [UIColor colorWithRed:pixel1.r/255.0f green:pixel1.g/255.0f blue:pixel1.b/255.0f alpha:1.0f];
+    [color1 getHue:nil saturation:&sat1 brightness:&br1 alpha:nil];
+
+    if (pixel2.d > pixel1.d * 0.125) {
+        CGFloat sat2, br2;
+        UIColor *color2 = [UIColor colorWithRed:pixel2.r/255.0f green:pixel2.g/255.0f blue:pixel2.b/255.0f alpha:1.0f];
+        [color2 getHue:nil saturation:&sat2 brightness:&br2 alpha:nil];
+
+        if (sat2 + br2 * 0.5 > sat1 + br1 * 0.5) {
+            return color2;
+        }
+    }
+
+    return color1;
 }
 
 -(int)colourDistance:(RGBPixel *)a andB:(RGBPixel *)b {
