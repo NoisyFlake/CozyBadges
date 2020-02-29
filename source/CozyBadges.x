@@ -1,7 +1,7 @@
 /*
 
 	CozyBadges
-	Replace notification badges with sleek labels
+	A cozy place for your badges
 
 	Copyright (C) 2019 by NoisyFlake
 
@@ -13,15 +13,14 @@
 #import "CozyBadges.h"
 #import "CBColors.h"
 
-NSMutableDictionary *prefs, *defaultPrefs;
-struct SBIconImageInfo imageInfo;
+CozyPrefs *settings;
 
-BOOL isColorBadgesAvailable;
+struct SBIconImageInfo imageInfo;
 
 %hook SBIconSimpleLabelView
 	-(void)setFrame:(CGRect)frame {
 		bool isInDock = [self.iconView.location isEqual:@"SBIconLocationDock"] || [self.iconView.location isEqual:@"SBIconLocationFloatingDock"];
-		frame.origin.y += [getValue(isInDock ? @"labelOffsetDock" : @"labelOffset") floatValue];
+		frame.origin.y += [[settings valueForKey:(isInDock ? @"labelOffsetDock" : @"labelOffset")] floatValue];
 
 		%orig;
 	}
@@ -30,7 +29,7 @@ BOOL isColorBadgesAvailable;
 %hook SBIconLegibilityLabelView
 	-(void)setFrame:(CGRect)frame {
 		bool isInDock = [self.iconView.location isEqual:@"SBIconLocationDock"] || [self.iconView.location isEqual:@"SBIconLocationFloatingDock"];
-		frame.origin.y += [getValue(isInDock ? @"labelOffsetDock" : @"labelOffset") floatValue];
+		frame.origin.y += [[settings valueForKey:(isInDock ? @"labelOffsetDock" : @"labelOffset")] floatValue];
 
 		%orig;
 	}
@@ -46,7 +45,7 @@ BOOL isColorBadgesAvailable;
 
 	-(void)layoutSubviews {
 		// Disable legibility settings for active labels (prevents iOS from darkening the label on a bright wallpaper)
-		_UILegibilitySettings* settings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
+		_UILegibilitySettings* legibilitySettings = [[self icon] badgeValue] > 0 ? nil : [self legibilitySettings];
 
 		SBIconLabelImageParameters *params = [self _labelImageParameters];
 		SBIconLabelView *labelView = self.labelView;
@@ -57,8 +56,8 @@ BOOL isColorBadgesAvailable;
 		if([labelView isKindOfClass:%c(SBIconLegibilityLabelView)] || [self.location isEqual:@"SBIconLocationFloatingDock"]) {
 
 			// Hide or show label
-			if (isIconInDock && getBool(@"dockEnabled")) {
-				labelView.hidden = (getBool(@"dockHideLabels") &&
+			if (isIconInDock && [settings boolForKey:@"dockEnabled"]) {
+				labelView.hidden = ([settings boolForKey:@"dockHideLabels"] &&
 					(![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:[self icon]] || [[self icon] badgeValue] <= 0));
 
 				// We might need to raise or lower icons in the dock, this calls originForIconAtCoordinate
@@ -70,7 +69,7 @@ BOOL isColorBadgesAvailable;
 				}
 
 			} else if (!isIconInDock) {
-				labelView.hidden = (getBool(@"hideLabels") &&
+				labelView.hidden = ([settings boolForKey:@"hideLabels"] &&
 					(![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:[self icon]] || [[self icon] badgeValue] <= 0));
 			}
 
@@ -81,7 +80,7 @@ BOOL isColorBadgesAvailable;
 
 		if (!labelView.hidden) {
 			// Apply legibility settings to the label if necessary
-			[labelView updateIconLabelWithSettings:settings imageParameters:params];
+			[labelView updateIconLabelWithSettings:legibilitySettings imageParameters:params];
 
 			// Update the actual label so that it displays the desired information
 			SBIconLabelView *imageView = (SBIconLabelView *)([labelView respondsToSelector:@selector(imageView)] ? labelView.imageView : labelView);
@@ -103,7 +102,7 @@ BOOL isColorBadgesAvailable;
 
 	-(BOOL)allowsLabelArea {
 		// Allow labels in the dock
-		if (isIconInDock && getBool(@"dockEnabled")) {
+		if (isIconInDock && [settings boolForKey:@"dockEnabled"]) {
 			return YES;
 		}
 
@@ -112,7 +111,7 @@ BOOL isColorBadgesAvailable;
 
 	-(void)_createAccessoryViewIfNecessary {
 		// Only show regular badges in the dock if desired
-		if (isIconInDock && !getBool(@"dockEnabled")) %orig;
+		if (isIconInDock && ![settings boolForKey:@"dockEnabled"]) %orig;
 	}
 
 	-(BOOL)allowsLabelAccessoryView {
@@ -125,7 +124,7 @@ BOOL isColorBadgesAvailable;
 
 	// Move icons in the dock up to make space for the labels
 	-(CGPoint)originForIconAtCoordinate:(SBIconCoordinate)arg1 metrics:(const id*)arg2 {
-		if (!getBool(@"dockEnabled")) return %orig;
+		if (![settings boolForKey:@"dockEnabled"]) return %orig;
 
 		CGPoint point = %orig;
 		CGPoint newPoint = CGPointMake(point.x, point.y - 8);
@@ -188,20 +187,15 @@ BOOL isColorBadgesAvailable;
 
 		if(self.hasNotification) {
 
-			if (getBool(@"backgroundEnabled")) {
-				if (getBool(@"backgroundAutoColor")) {
+			if ([settings boolForKey:@"backgroundEnabled"]) {
+				if ([settings boolForKey:@"backgroundAutoColor"]) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					if (isColorBadgesAvailable) {
-						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
-						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
-					} else {
-						if (!self.dominantColor) {
-							self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
-						}
-						color = self.dominantColor;
+					if (!self.dominantColor) {
+						self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 					}
+					color = self.dominantColor;
 				} else {
-					color = [UIColor RGBAColorFromHexString:getValue(@"backgroundColor")];
+					color = [UIColor RGBAColorFromHexString:[settings valueForKey:@"backgroundColor"]];
 				}
 			}
 
@@ -215,22 +209,17 @@ BOOL isColorBadgesAvailable;
 
 		if (self.hasNotification) {
 
-			if (getBool(@"textEnabled")) {
-				if (getBool(@"textAutoColor")) {
+			if ([settings boolForKey:@"textEnabled"]) {
+				if ([settings boolForKey:@"textAutoColor"]) {
 					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					if (isColorBadgesAvailable) {
-						int i_color = [[%c(ColorBadges) sharedInstance] colorForIcon:actualIcon];
-						color = [UIColor RGBAColorFromHexString:[NSString stringWithFormat:@"#0x%0X", i_color]];
-					} else {
-						if (!self.dominantColor) {
-							self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
-						}
-						color = self.dominantColor;
+					if (!self.dominantColor) {
+						self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 					}
+					color = self.dominantColor;
 				} else {
-					color = [UIColor RGBAColorFromHexString:getValue(@"textColor")];
+					color = [UIColor RGBAColorFromHexString:[settings valueForKey:@"textColor"]];
 				}
-			} else if (getBool(@"backgroundEnabled")) {
+			} else if ([settings boolForKey:@"backgroundEnabled"]) {
 				color = [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
 			}
 
@@ -244,18 +233,18 @@ BOOL isColorBadgesAvailable;
 
 		if (self.hasNotification) {
 
-			if (getBool(@"nameEnabled")) {
+			if ([settings boolForKey:@"nameEnabled"]) {
 				if ([self.icon badgeValue] > 1) {
-					if ([getValue([NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]) length] > 0) {
-						text = getValue([NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]);
+					if ([[settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]] length] > 0) {
+						text = [settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]];
 					} else {
-						text = [getValue(@"namePlural") length] > 0 ? getValue(@"namePlural") : @"@ Messages";
+						text = [[settings valueForKey:@"namePlural"] length] > 0 ? [settings valueForKey:@"namePlural"] : @"@ Messages";
 					}
 				} else {
-					if ([getValue([NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]) length] > 0) {
-						text = getValue([NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]);
+					if ([[settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]] length] > 0) {
+						text = [settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]];
 					} else {
-						text = [getValue(@"nameSingular") length] > 0 ? getValue(@"nameSingular") : @"@ Message";
+						text = [[settings valueForKey:@"nameSingular"] length] > 0 ? [settings valueForKey:@"nameSingular"] : @"@ Message";
 					}
 				}
 
@@ -270,57 +259,15 @@ BOOL isColorBadgesAvailable;
 
 %end
 
-// ----- PREFERENCE HANDLING ----- //
-
-static BOOL getBool(NSString *key) {
-	// Prevent labels from always showing in FloatingDock which is not supported
-	if ([key isEqual:@"dockHideLabels"] && [%c(SBFloatingDockController) isFloatingDockSupported]) {
-		return YES;
-	}
-
-	id ret = [prefs objectForKey:key];
-
-	if(ret == nil) {
-		ret = [defaultPrefs objectForKey:key];
-	}
-
-	return [ret boolValue];
-}
-
-static NSString* getValue(NSString *key) {
-	return [prefs objectForKey:key] ?: [defaultPrefs objectForKey:key];
-}
-
-static void initPrefs() {
-	// Copy the default preferences file when the actual preference file doesn't exist
-	NSString *path = @"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist";
-	NSString *pathDefault = @"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist";
-
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if (![fileManager fileExistsAtPath:path]) {
-		[fileManager copyItemAtPath:pathDefault toPath:path error:nil];
-	}
-
-	prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-	defaultPrefs = [[NSMutableDictionary alloc] initWithContentsOfFile:pathDefault];
-
-	// Fill imageInfo - no idea what optionA or optionB is, but 2/0 seems to do the trick to get the desired image
-	imageInfo.size = CGSizeMake(30, 30);
-	imageInfo.optionA = 2;
-	imageInfo.optionB = 0;
-
-	if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/ColorBadges.dylib"]) {
-		isColorBadgesAvailable = YES;
-		dlopen("/Library/MobileSubstrate/DynamicLibraries/ColorBadges.dylib", RTLD_LAZY);
-	} else {
-		isColorBadgesAvailable = NO;
-	}
-}
-
 %ctor {
-	initPrefs();
+	settings = [CozyPrefs sharedInstance];
 
-	if (getBool(@"enabled")) {
+	if ([settings boolForKey:@"enabled"]) {
+		// Fill imageInfo - no idea what optionA or optionB is, but 2/0 seems to do the trick to get the desired image
+		imageInfo.size = CGSizeMake(30, 30);
+		imageInfo.optionA = 2;
+		imageInfo.optionB = 0;
+
 		%init(_ungrouped);
 	}
 }

@@ -1,8 +1,18 @@
 #define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"] || [self.location isEqual:@"SBIconLocationFloatingDockSuggestions"])
 
-@interface ColorBadges : NSObject
-+ (instancetype)sharedInstance;
-- (int)colorForIcon:(id)icon;
+typedef struct SBIconImageInfo {
+    CGSize size;
+    CGFloat optionA;
+    CGFloat optionB;
+} SBIconImageInfo;
+
+@interface CozyPrefs : NSObject
+@property (nonatomic, retain) NSDictionary *settings;
+@property (nonatomic, retain) NSDictionary *defaultSettings;
++ (id)sharedInstance;
+- (id)init;
+-(BOOL)boolForKey:(NSString *)key;
+-(NSString *)valueForKey:(NSString *)key;
 @end
 
 @interface UIView (CozyBadges)
@@ -110,12 +120,3 @@ typedef struct SBIconCoordinate {
     long long row;
     long long col;
 } SBIconCoordinate;
-
-typedef struct SBIconImageInfo {
-    CGSize size;
-    CGFloat optionA;
-    CGFloat optionB;
-} SBIconImageInfo;
-
-static BOOL getBool(NSString *key);
-static NSString* getValue(NSString *key);

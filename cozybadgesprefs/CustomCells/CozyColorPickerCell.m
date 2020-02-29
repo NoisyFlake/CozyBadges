@@ -1,6 +1,6 @@
 #include "../CozyHeaders.h"
 
-#import "../../CBColors.h"
+#import "../../source/CBColors.h"
 #import <libcolorpicker.h>
 #import <Preferences/PSSpecifier.h>
 
