@@ -1,4 +1,5 @@
 #include "CozyHeaders.h"
+#include "../source/CozyBadges.h"
 
 @implementation CozyRootListController
 
@@ -10,42 +11,23 @@
 
 - (NSArray *)specifiers {
 	if (!_specifiers) {
-		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
-	}
+		NSMutableArray *mutableSpecifiers = [[self loadSpecifiersFromPlistName:@"Root" target:self] mutableCopy];
 
-	NSLog(@"CozyBadges: GOT IT");
+        CozyPrefs *prefs = [CozyPrefs sharedInstance];
 
-	// Remove dockHideLabels entry if FloatingDock is installed
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/FloatingDock.dylib"] || [fileManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/FloatingDockPlus.dylib"]) {
-		NSMutableArray *mutableArray = [_specifiers mutableCopy];
-		for (PSSpecifier *spec in _specifiers) {
-			if ([spec.properties[@"id"] isEqual:@"dockHideLabels"]) {
-				[mutableArray removeObject:spec];
-			}
-		}
-		_specifiers = mutableArray;
+        for (PSSpecifier *spec in [mutableSpecifiers reverseObjectEnumerator]) {
+            if (
+                (spec.properties[@"depends"] && ![prefs boolForKey:spec.properties[@"depends"]]) ||
+                (spec.properties[@"dependsNot"] && [prefs boolForKey:spec.properties[@"dependsNot"]])
+            ) {
+                [mutableSpecifiers removeObject:spec];
+            }
+        }
+
+        _specifiers = mutableSpecifiers;
 	}
 
 	return _specifiers;
-}
-
--(void)setBackgroundEnabled:(id)value specifier:(PSSpecifier *)specifier {
-    if([value boolValue]) {
-    	[self setPreferenceValue:@(NO) specifier:[self specifierForID:@"textEnabled"]];
-    }
-
-    [self setPreferenceValue:value specifier:specifier];
-    [self reload];
-}
-
--(void)setTextEnabled:(id)value specifier:(PSSpecifier *)specifier {
-    if([value boolValue]) {
-    	[self setPreferenceValue:@(NO) specifier:[self specifierForID:@"backgroundEnabled"]];
-    }
-
-    [self setPreferenceValue:value specifier:specifier];
-    [self reload];
 }
 
 -(void)_returnKeyPressed:(id)arg1 {

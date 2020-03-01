@@ -22,7 +22,24 @@
 	NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", specifier.properties[@"defaults"]];
 	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
+
+	if ([specifier.properties[@"key"] isEqual:@"backgroundAlwaysEnabled"]) {
+		[settings setObject:@NO forKey:@"textAlwaysEnabled"];
+	} else if ([specifier.properties[@"key"] isEqual:@"textAlwaysEnabled"]) {
+		[settings setObject:@NO forKey:@"backgroundAlwaysEnabled"];
+	} else if ([specifier.properties[@"key"] isEqual:@"backgroundEnabled"]) {
+		[settings setObject:@NO forKey:@"textEnabled"];
+	} else if ([specifier.properties[@"key"] isEqual:@"textEnabled"]) {
+		[settings setObject:@NO forKey:@"backgroundEnabled"];
+	} else if ([specifier.properties[@"key"] isEqual:@"dockHideLabels"] && ![value boolValue]) {
+		[settings setObject:@YES forKey:@"dockRaiseLabels"];
+	}
+
 	[settings writeToFile:path atomically:YES];
+
+	if (specifier.properties[@"refresh"]) {
+		[self reloadSpecifiers];
+	}
 }
 
 -(void)respring {

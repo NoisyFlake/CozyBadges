@@ -51,6 +51,12 @@
 @interface CozyPerAppSettings : CozyBaseController
 @end
 
+@interface CozyRegularController : CozyBaseController
+@end
+
+@interface CozyNotificationController : CozyBaseController
+@end
+
 @interface CozyRootListController : CozyBaseController
 @end
 

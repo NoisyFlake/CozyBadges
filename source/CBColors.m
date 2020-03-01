@@ -150,6 +150,6 @@
     const CGFloat *componentColors = CGColorGetComponents(self.CGColor);
     CGFloat colorBrightness = ((componentColors[0] * 299) + (componentColors[1] * 587) + (componentColors[2] * 114)) / 1000;
 
-    return (colorBrightness < 0.58);
+    return (colorBrightness < 0.5);
 }
 @end

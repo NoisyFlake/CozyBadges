@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+
+		<dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+			<key>footerText</key>               <string>Hide labels for apps that don't have any notification.</string>
+        </dict>
+
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>hideLabels</string>
+			<key>label</key>					<string>Hide Labels</string>
+		</dict>
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<true/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>dockHideLabels</string>
+			<key>label</key>					<string>Hide Dock Labels</string>
+			<key>refresh</key>                  <true/>
+		</dict>
+
+		<dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+			<key>footerText</key>               <string>Display all dock icons on the same height. Otherwise only icons with notifications will be raised.</string>
+			<key>depends</key>                  <string>dockHideLabels</string>
+        </dict>
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>dockRaiseLabels</string>
+			<key>label</key>					<string>Raise Dock Icons</string>
+			<key>depends</key>                  <string>dockHideLabels</string>
+		</dict>
+
+		<dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+            <key>label</key>                    <string>Background Color</string>
+        </dict>
+        <dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>backgroundAlwaysEnabled</string>
+			<key>label</key>					<string>Enabled</string>
+            <key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>backgroundAlwaysAutoColor</string>
+			<key>label</key>					<string>Automatic Color</string>
+            <key>depends</key>                  <string>backgroundAlwaysEnabled</string>
+			<key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+            <key>cell</key>                     <string>PSLinkCell</string>
+            <key>cellClass</key>                <string>CozyColorPickerCell</string>
+            <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
+            <key>key</key>                      <string>backgroundAlwaysColor</string>
+            <key>alpha</key>                    <true/>
+            <key>label</key>                    <string>Manual Color</string>
+            <key>depends</key>                  <string>backgroundAlwaysEnabled</string>
+			<key>dependsNot</key>               <string>backgroundAlwaysAutoColor</string>
+        </dict>
+
+		<dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+            <key>label</key>                    <string>Text Color</string>
+        </dict>
+        <dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>textAlwaysEnabled</string>
+			<key>label</key>					<string>Enabled</string>
+            <key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>textAlwaysAutoColor</string>
+			<key>label</key>					<string>Automatic Color</string>
+            <key>depends</key>                  <string>textAlwaysEnabled</string>
+			<key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+            <key>cell</key>                     <string>PSLinkCell</string>
+            <key>cellClass</key>                <string>CozyColorPickerCell</string>
+            <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
+            <key>key</key>                      <string>textAlwaysColor</string>
+            <key>alpha</key>                    <true/>
+            <key>label</key>                    <string>Manual Color</string>
+            <key>depends</key>                  <string>textAlwaysEnabled</string>
+			<key>dependsNot</key>               <string>textAlwaysAutoColor</string>
+        </dict>
+
+        <!-- <dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+            <key>label</key>                    <string>With Notification</string>
+        </dict>
+        <dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>textEnabled</string>
+			<key>label</key>					<string>Enabled</string>
+			<key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+			<key>cell</key>						<string>PSSwitchCell</string>
+			<key>cellClass</key>                <string>CozyToggle</string>
+			<key>default</key>					<false/>
+			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>						<string>textAutoColor</string>
+			<key>label</key>					<string>Automatic Color</string>
+			<key>depends</key>                  <string>textEnabled</string>
+			<key>refresh</key>                  <true/>
+		</dict>
+		<dict>
+            <key>cell</key>                     <string>PSLinkCell</string>
+            <key>cellClass</key>                <string>CozyColorPickerCell</string>
+            <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
+            <key>key</key>                      <string>textColor</string>
+            <key>alpha</key>                    <true/>
+            <key>label</key>                    <string>Manual Color</string>
+			<key>depends</key>                  <string>textEnabled</string>
+			<key>dependsNot</key>               <string>textAutoColor</string>
+        </dict> -->
+
+	</array>
+	<key>title</key>
+	<string>Regular Settings</string>
+</dict>
+</plist>

@@ -61,9 +61,9 @@
 					version.text = [NSString stringWithFormat:@"Version %@", outputString];
 				}
 
-				[UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+				// [UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 					version.alpha = 1;
-				} completion:nil];
+				// } completion:nil];
 			});
 		});
 

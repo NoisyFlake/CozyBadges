@@ -12,6 +12,8 @@ static NSString *defaultFile = @"/Library/PreferenceBundles/CozyBadgesPrefs.bund
 	if (sharedInstance == nil) {
 		NSLog(@"Initializing preferences.");
 		sharedInstance = [[self alloc] init];
+	} else {
+		[sharedInstance reloadPreferences];
 	}
 
 	return sharedInstance;
@@ -34,6 +36,10 @@ static NSString *defaultFile = @"/Library/PreferenceBundles/CozyBadgesPrefs.bund
 	}
 
 	return self;
+}
+
+-(void)reloadPreferences {
+	_settings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsFile];
 }
 
 -(BOOL)boolForKey:(NSString *)key {

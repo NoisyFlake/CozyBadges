@@ -3,7 +3,7 @@
 	CozyBadges
 	A cozy place for your badges
 
-	Copyright (C) 2019 by NoisyFlake
+	Copyright (C) 2020 by NoisyFlake
 
 	All Rights Reserved
 
@@ -127,9 +127,23 @@ struct SBIconImageInfo imageInfo;
 		if (![settings boolForKey:@"dockEnabled"]) return %orig;
 
 		CGPoint point = %orig;
-		CGPoint newPoint = CGPointMake(point.x, point.y - 8);
+		NSArray *icons = [self icons];
 
-		return newPoint;
+		NSUInteger count = 1;
+		for(SBIcon *icon in icons) {
+			if (count == arg1.col) {
+				// This is the icon we are currently setting the origin for
+				if ([settings boolForKey:@"dockRaiseLabels"] ||
+					([[%c(SBIconController) sharedInstance] allowsBadgingForIcon:icon] && [icon badgeValue] > 0)) {
+					CGPoint newPoint = CGPointMake(point.x, point.y - 8);
+					return newPoint;
+				}
+			}
+
+			count++;
+		}
+
+		return %orig;
 	}
 
 %end
@@ -183,49 +197,57 @@ struct SBIconImageInfo imageInfo;
 	}
 
 	-(UIColor *)focusHighlightColor {
-		UIColor *color = %orig;
+		NSString *autoKey = nil, *manualKey = nil;
 
-		if(self.hasNotification) {
-
-			if ([settings boolForKey:@"backgroundEnabled"]) {
-				if ([settings boolForKey:@"backgroundAutoColor"]) {
-					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					if (!self.dominantColor) {
-						self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
-					}
-					color = self.dominantColor;
-				} else {
-					color = [UIColor RGBAColorFromHexString:[settings valueForKey:@"backgroundColor"]];
-				}
-			}
-
+		if (self.hasNotification && [settings boolForKey:@"backgroundEnabled"]) {
+			autoKey = @"backgroundAutoColor";
+			manualKey = @"backgroundColor";
+		} else if (!self.hasNotification && [settings boolForKey:@"backgroundAlwaysEnabled"]) {
+			autoKey = @"backgroundAlwaysAutoColor";
+			manualKey = @"backgroundAlwaysColor";
+		} else {
+			return %orig;
 		}
 
-		return color;
+		if ([settings boolForKey:autoKey]) {
+			if (!self.dominantColor) {
+				SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+			}
+
+			return self.dominantColor;
+		} else {
+			return [UIColor RGBAColorFromHexString:[settings valueForKey:manualKey]];
+		}
 	}
 
 	-(UIColor *)textColor {
-		UIColor *color = %orig;
-
-		if (self.hasNotification) {
-
-			if ([settings boolForKey:@"textEnabled"]) {
-				if ([settings boolForKey:@"textAutoColor"]) {
-					SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-					if (!self.dominantColor) {
-						self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
-					}
-					color = self.dominantColor;
-				} else {
-					color = [UIColor RGBAColorFromHexString:[settings valueForKey:@"textColor"]];
-				}
-			} else if ([settings boolForKey:@"backgroundEnabled"]) {
-				color = [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
-			}
-
+		if ([self focusHighlightColor]) {
+			return [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
 		}
 
-		return color;
+		NSString *autoKey = nil, *manualKey = nil;
+
+		if (self.hasNotification && [settings boolForKey:@"textEnabled"]) {
+			autoKey = @"textAutoColor";
+			manualKey = @"textColor";
+		} else if (!self.hasNotification && [settings boolForKey:@"textAlwaysEnabled"]) {
+			autoKey = @"textAlwaysAutoColor";
+			manualKey = @"textAlwaysColor";
+		} else {
+			return %orig;
+		}
+
+		if ([settings boolForKey:autoKey]) {
+			if (!self.dominantColor) {
+				SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+			}
+
+			return self.dominantColor;
+		} else {
+			return [UIColor RGBAColorFromHexString:[settings valueForKey:manualKey]];
+		}
 	}
 
 	-(NSString *)text {

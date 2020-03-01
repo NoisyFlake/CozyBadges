@@ -2,25 +2,30 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>enabled</key> 				<true/>
+	<key>enabled</key> 				    <true/>
+	<key>dockEnabled</key> 			    <true/>
 
-	<key>hideLabels</key> 			<false/>
-	<key>labelOffset</key> 			<real>0</real>
-	<key>labelOffsetDock</key> 		<real>0</real>
+	<key>hideLabels</key> 			    <false/>
+	<key>dockHideLabels</key> 		    <true/>
+	<key>dockRaiseLabels</key>          <false/>
+	<key>backgroundAlwaysEnabled</key>  <false/>
+	<key>backgroundAlwaysAutoColor</key> <false/>
+	<key>backgroundAlwaysColor</key>    <string>#9470bf:1.00</string>
+	<key>textAlwaysEnabled</key>        <false/>
+	<key>textAlwaysAutoColor</key>      <false/>
+	<key>textAlwaysColor</key>          <string>#9470bf:1.00</string>
 
-	<key>dockEnabled</key> 			<true/>
-	<key>dockHideLabels</key> 		<true/>
+	<key>backgroundEnabled</key> 	    <true/>
+	<key>backgroundAutoColor</key> 	    <true/>
+	<key>backgroundColor</key> 		    <string>#9470bf:1.00</string>
+	<key>textEnabled</key> 			    <false/>
+	<key>textAutoColor</key> 		    <false/>
+	<key>textColor</key> 			    <string>#9470bf:1.00</string>
+	<key>nameEnabled</key> 			    <true/>
+	<key>nameSingular</key> 		    <string></string>
+	<key>namePlural</key> 			    <string></string>
 
-	<key>backgroundEnabled</key> 	<true/>
-	<key>backgroundAutoColor</key> 	<true/>
-	<key>backgroundColor</key> 		<string>#618fc7:1.00</string>
-
-	<key>textEnabled</key> 			<false/>
-	<key>textAutoColor</key> 		<false/>
-	<key>textColor</key> 			<string>#618fc7:1.00</string>
-
-	<key>nameEnabled</key> 			<false/>
-	<key>nameSingular</key> 		<string></string>
-	<key>namePlural</key> 			<string></string>
+	<key>labelOffset</key> 			    <real>0</real>
+	<key>labelOffsetDock</key> 		    <real>0</real>
 </dict>
 </plist>
