@@ -152,6 +152,7 @@ struct SBIconImageInfo imageInfo;
 	%property (nonatomic, retain) SBIcon *icon;
 	%property (nonatomic, retain) SBIcon *folderIcon;
 	%property (nonatomic, assign) BOOL hasNotification;
+	%property (nonatomic, assign) int folderNotificationApps;
 	%property (nonatomic, retain) UIColor *dominantColor;
 
 	%new
@@ -163,6 +164,14 @@ struct SBIconImageInfo imageInfo;
 		self.icon = icon;
 		self.folderIcon = [icon isFolderIcon] ? [self iconForFolder:icon] : nil;
 		self.dominantColor = nil;
+
+		self.folderNotificationApps = 0;
+		if ([icon isFolderIcon]) {
+			for(SBIcon *fIcon in [[((SBFolderIcon *)self.icon) folder] allIcons]) {
+				if (![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:fIcon]) continue;
+				if ([fIcon badgeValue] > 0) self.folderNotificationApps++;
+			}
+		}
 
 		return self;
 	}
@@ -200,7 +209,7 @@ struct SBIconImageInfo imageInfo;
 
 		if ([settings boolForKey:autoKey]) {
 			if (!self.dominantColor) {
-				SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
+				SBIcon *actualIcon = self.hasNotification && self.folderIcon != nil ? self.folderIcon : self.icon;
 				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 			}
 
@@ -240,15 +249,18 @@ struct SBIconImageInfo imageInfo;
 		if (self.hasNotification) {
 
 			if ([settings boolForKey:@"nameEnabled"]) {
+				NSString *bundleID = self.folderIcon && self.folderNotificationApps == 1 ? self.folderIcon.applicationBundleID : self.icon.applicationBundleID; // Allow using the special text in case there's only 1 notification inside the folder
+				if (self.folderIcon) NSLog(@"COUNT: %d", self.folderNotificationApps);
+
 				if ([self.icon badgeValue] > 1) {
-					if ([[settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]] length] > 0) {
-						text = [settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", self.icon.applicationBundleID]];
+					if ([[settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", bundleID]] length] > 0) {
+						text = [settings valueForKey:[NSString stringWithFormat:@"namePlural_%@", bundleID]];
 					} else {
 						text = [[settings valueForKey:@"namePlural"] length] > 0 ? [settings valueForKey:@"namePlural"] : @"@ Messages";
 					}
 				} else {
-					if ([[settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]] length] > 0) {
-						text = [settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", self.icon.applicationBundleID]];
+					if ([[settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", bundleID]] length] > 0) {
+						text = [settings valueForKey:[NSString stringWithFormat:@"nameSingular_%@", bundleID]];
 					} else {
 						text = [[settings valueForKey:@"nameSingular"] length] > 0 ? [settings valueForKey:@"nameSingular"] : @"@ Message";
 					}

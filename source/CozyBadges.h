@@ -86,6 +86,7 @@ typedef struct SBIconImageInfo {
 @property (nonatomic, retain) SBIcon *folderIcon;
 @property (nonatomic, retain) SBIcon *icon;
 @property (nonatomic, assign) BOOL hasNotification;
+@property (nonatomic, assign) int folderNotificationApps;
 @property (nonatomic, retain) UIColor *dominantColor;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
 -(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
