@@ -46,6 +46,7 @@
 @end
 
 @interface CozyBaseController : PSListController
+- (NSMutableArray *)dynamicSpecifiersFromPlist:(NSString *)plist;
 @end
 
 @interface CozyPerAppSettings : CozyBaseController

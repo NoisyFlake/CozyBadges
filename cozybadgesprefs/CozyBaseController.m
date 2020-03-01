@@ -1,4 +1,5 @@
 #include "CozyHeaders.h"
+#include "../source/CozyBadges.h"
 #import <spawn.h>
 
 @implementation CozyBaseController
@@ -40,6 +41,23 @@
 	if (specifier.properties[@"refresh"]) {
 		[self reloadSpecifiers];
 	}
+}
+
+- (NSMutableArray *)dynamicSpecifiersFromPlist:(NSString *)plist {
+	NSMutableArray *mutableSpecifiers = [[self loadSpecifiersFromPlistName:plist target:self] mutableCopy];
+
+	CozyPrefs *prefs = [CozyPrefs sharedInstance];
+
+	for (PSSpecifier *spec in [mutableSpecifiers reverseObjectEnumerator]) {
+		if (
+			(spec.properties[@"depends"] && ![prefs boolForKey:spec.properties[@"depends"]]) ||
+			(spec.properties[@"dependsNot"] && [prefs boolForKey:spec.properties[@"dependsNot"]])
+		) {
+			[mutableSpecifiers removeObject:spec];
+		}
+	}
+
+	return mutableSpecifiers;
 }
 
 -(void)respring {
