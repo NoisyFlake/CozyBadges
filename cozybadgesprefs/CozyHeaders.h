@@ -46,7 +46,9 @@
 @end
 
 @interface CozyBaseController : PSListController
+@property (nonatomic, retain) NSArray *savedSpecifiers;
 - (NSMutableArray *)dynamicSpecifiersFromPlist:(NSString *)plist;
+- (void)updateSpecifiers;
 @end
 
 @interface CozyPerAppSettings : CozyBaseController
@@ -59,6 +61,9 @@
 @end
 
 @interface CozyRootListController : CozyBaseController
+@end
+
+@interface CozyHeader : PSTableCell
 @end
 
 @interface CozyColorPickerCell : PSTableCell

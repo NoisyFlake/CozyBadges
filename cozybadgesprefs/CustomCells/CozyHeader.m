@@ -1,8 +1,5 @@
 #include "../CozyHeaders.h"
 
-@interface CozyHeader : PSTableCell 
-@end
-
 @implementation CozyHeader
 
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
@@ -61,9 +58,7 @@
 					version.text = [NSString stringWithFormat:@"Version %@", outputString];
 				}
 
-				// [UIView animateWithDuration:0.75 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-					version.alpha = 1;
-				// } completion:nil];
+				version.alpha = 1;
 			});
 		});
 

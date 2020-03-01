@@ -89,6 +89,7 @@ typedef struct SBIconImageInfo {
 @property (nonatomic, retain) UIColor *dominantColor;
 -(id)initWithParameters:(SBIconLabelImageParameters *)params icon:(SBIcon *)icon;
 -(SBApplicationIcon *)iconForFolder:(SBIcon *)folderIcon;
+-(UIColor *)cozyColorFor:(NSString *)mode;
 -(UIColor *)focusHighlightColor;
 @end
 

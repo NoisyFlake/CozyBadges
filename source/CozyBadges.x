@@ -167,14 +167,6 @@ struct SBIconImageInfo imageInfo;
 		return self;
 	}
 
-	-(void)dealloc {
-		self.icon = nil;
-		self.folderIcon = nil;
-		self.hasNotification = nil;
-
-		%orig;
-	}
-
 	%new
 	-(SBIcon *)iconForFolder:(SBFolderIcon *)folderIcon {
 		SBIcon *ret = nil;
@@ -192,21 +184,18 @@ struct SBIconImageInfo imageInfo;
 		return ret;
 	}
 
-	-(BOOL)isColorspaceGrayscale {
-		return NO;
-	}
-
-	-(UIColor *)focusHighlightColor {
+	%new
+	-(UIColor *)cozyColorFor:(NSString *)mode {
 		NSString *autoKey = nil, *manualKey = nil;
 
-		if (self.hasNotification && [settings boolForKey:@"backgroundEnabled"]) {
-			autoKey = @"backgroundAutoColor";
-			manualKey = @"backgroundColor";
-		} else if (!self.hasNotification && [settings boolForKey:@"backgroundAlwaysEnabled"]) {
-			autoKey = @"backgroundAlwaysAutoColor";
-			manualKey = @"backgroundAlwaysColor";
+		if (self.hasNotification && [[settings valueForKey:@"notificationMode"] isEqual:mode]) {
+			autoKey = @"notificationAutoColor";
+			manualKey = @"notificationColor";
+		} else if (!self.hasNotification && [[settings valueForKey:@"regularMode"] isEqual:mode]) {
+			autoKey = @"regularAutoColor";
+			manualKey = @"regularColor";
 		} else {
-			return %orig;
+			return nil;
 		}
 
 		if ([settings boolForKey:autoKey]) {
@@ -219,6 +208,22 @@ struct SBIconImageInfo imageInfo;
 		} else {
 			return [UIColor RGBAColorFromHexString:[settings valueForKey:manualKey]];
 		}
+	}
+
+	-(void)dealloc {
+		self.icon = nil;
+		self.folderIcon = nil;
+		self.hasNotification = nil;
+
+		%orig;
+	}
+
+	-(BOOL)isColorspaceGrayscale {
+		return NO;
+	}
+
+	-(UIColor *)focusHighlightColor {
+		return [self cozyColorFor:@"background"] ?: %orig;
 	}
 
 	-(UIColor *)textColor {
@@ -226,28 +231,7 @@ struct SBIconImageInfo imageInfo;
 			return [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
 		}
 
-		NSString *autoKey = nil, *manualKey = nil;
-
-		if (self.hasNotification && [settings boolForKey:@"textEnabled"]) {
-			autoKey = @"textAutoColor";
-			manualKey = @"textColor";
-		} else if (!self.hasNotification && [settings boolForKey:@"textAlwaysEnabled"]) {
-			autoKey = @"textAlwaysAutoColor";
-			manualKey = @"textAlwaysColor";
-		} else {
-			return %orig;
-		}
-
-		if ([settings boolForKey:autoKey]) {
-			if (!self.dominantColor) {
-				SBIcon *actualIcon = self.folderIcon != nil ? self.folderIcon : self.icon;
-				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
-			}
-
-			return self.dominantColor;
-		} else {
-			return [UIColor RGBAColorFromHexString:[settings valueForKey:manualKey]];
-		}
+		return [self cozyColorFor:@"text"] ?: %orig;
 	}
 
 	-(NSString *)text {

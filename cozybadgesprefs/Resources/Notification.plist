@@ -7,82 +7,50 @@
 
 		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
-            <key>label</key>                    <string>Background Color</string>
+            <key>label</key>                    <string>Color Settings</string>
         </dict>
-        <dict>
-			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozyToggle</string>
-			<key>default</key>					<false/>
-			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
-			<key>key</key>						<string>backgroundEnabled</string>
-			<key>label</key>					<string>Enabled</string>
-            <key>refresh</key>                  <true/>
+		<dict>
+			<key>cell</key>                          <string>PSSegmentCell</string>
+			<key>cellClass</key>                     <string>MEVOSegment</string>
+			<key>default</key>                       <string>background</string>
+			<key>defaults</key>                      <string>com.noisyflake.cozybadgesprefs</string>
+			<key>key</key>                           <string>notificationMode</string>
+			<key>refresh</key>                       <true/>
+			<key>validTitles</key>
+				<array>
+					<string>None</string>
+					<string>Text</string>
+					<string>Background</string>
+				</array>
+			<key>validValues</key>
+				<array>
+					<string>none</string>
+					<string>text</string>
+					<string>background</string>
+				</array>
 		</dict>
 		<dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
 			<key>cellClass</key>                <string>CozyToggle</string>
-			<key>default</key>					<false/>
+			<key>default</key>					<true/>
 			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
-			<key>key</key>						<string>backgroundAutoColor</string>
+			<key>key</key>						<string>notificationAutoColor</string>
 			<key>label</key>					<string>Automatic Color</string>
-            <key>depends</key>                  <string>backgroundEnabled</string>
 			<key>refresh</key>                  <true/>
 		</dict>
 		<dict>
             <key>cell</key>                     <string>PSLinkCell</string>
             <key>cellClass</key>                <string>CozyColorPickerCell</string>
             <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
-            <key>key</key>                      <string>backgroundColor</string>
+            <key>key</key>                      <string>notificationColor</string>
             <key>alpha</key>                    <true/>
             <key>label</key>                    <string>Manual Color</string>
-            <key>depends</key>                  <string>backgroundEnabled</string>
-			<key>dependsNot</key>               <string>backgroundAutoColor</string>
-        </dict>
-
-		<dict>
-            <key>cell</key>                     <string>PSGroupCell</string>
-            <key>label</key>                    <string>Text Color</string>
-        </dict>
-        <dict>
-			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozyToggle</string>
-			<key>default</key>					<false/>
-			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
-			<key>key</key>						<string>textEnabled</string>
-			<key>label</key>					<string>Enabled</string>
-            <key>refresh</key>                  <true/>
-		</dict>
-		<dict>
-			<key>cell</key>						<string>PSSwitchCell</string>
-			<key>cellClass</key>                <string>CozyToggle</string>
-			<key>default</key>					<false/>
-			<key>defaults</key>					<string>com.noisyflake.cozybadgesprefs</string>
-			<key>key</key>						<string>textAutoColor</string>
-			<key>label</key>					<string>Automatic Color</string>
-            <key>depends</key>                  <string>textEnabled</string>
-			<key>refresh</key>                  <true/>
-		</dict>
-		<dict>
-            <key>cell</key>                     <string>PSLinkCell</string>
-            <key>cellClass</key>                <string>CozyColorPickerCell</string>
-            <key>defaults</key>                 <string>com.noisyflake.cozybadgesprefs</string>
-            <key>key</key>                      <string>textColor</string>
-            <key>alpha</key>                    <true/>
-            <key>label</key>                    <string>Manual Color</string>
-            <key>depends</key>                  <string>textEnabled</string>
-			<key>dependsNot</key>               <string>textAutoColor</string>
+			<key>dependsNot</key>               <string>notificationAutoColor</string>
         </dict>
 
 		<dict>
             <key>cell</key>                     <string>PSGroupCell</string>
             <key>label</key>                    <string>Text Replacement</string>
-			<key>dependsNot</key>               <string>nameEnabled</string>
-        </dict>
-		<dict>
-            <key>cell</key>                     <string>PSGroupCell</string>
-			<key>label</key>                    <string>Text Replacement</string>
-            <key>footerText</key>               <string>Use @ as a placeholder for the number of notifications.</string>
-			<key>depends</key>                  <string>nameEnabled</string>
         </dict>
         <dict>
 			<key>cell</key>						<string>PSSwitchCell</string>
@@ -119,9 +87,15 @@
 			<key>label</key> 					<string>Per-App Settings</string>
 			<key>depends</key>                  <string>nameEnabled</string>
 		</dict>
+		<dict>
+            <key>cell</key>                     <string>PSGroupCell</string>
+            <key>footerText</key>               <string>Use @ as a placeholder for the number of notifications.</string>
+			<key>footerAlignment</key>          <string>1</string>
+			<key>depends</key>                  <string>nameEnabled</string>
+        </dict>
 
 	</array>
 	<key>title</key>
-	<string>Notification Settings</string>
+	<string>Labels with Notification</string>
 </dict>
 </plist>

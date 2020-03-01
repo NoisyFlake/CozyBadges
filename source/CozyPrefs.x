@@ -39,6 +39,7 @@ static NSString *defaultFile = @"/Library/PreferenceBundles/CozyBadgesPrefs.bund
 }
 
 -(void)reloadPreferences {
+	NSLog(@"Preferences reloaded");
 	_settings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsFile];
 }
 
