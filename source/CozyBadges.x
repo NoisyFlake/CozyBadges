@@ -209,6 +209,8 @@ struct SBIconImageInfo imageInfo;
 
 		if ([settings boolForKey:autoKey]) {
 			if (!self.dominantColor) {
+				if (!self.hasNotification && self.folderIcon) return UIColor.whiteColor;
+
 				SBIcon *actualIcon = self.hasNotification && self.folderIcon != nil ? self.folderIcon : self.icon;
 				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
 			}
