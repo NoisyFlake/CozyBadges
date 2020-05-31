@@ -45,13 +45,13 @@
         color = @"#FFFFFF:1.00";
     }
 
-    UIColor *startColor = [UIColor RGBAColorFromHexString:color];
+    UIColor *startColor = [UIColor cozyRGBAColorFromHexString:color];
     BOOL alpha = [[self.specifier propertyForKey:@"alpha"] boolValue];
 
     PFColorAlert *alert = [PFColorAlert colorAlertWithStartColor:startColor showAlpha:alpha];
 
     [alert displayWithCompletion:^void(UIColor *pickedColor) {
-        NSString *hexString = [UIColor hexStringFromColor:pickedColor];
+        NSString *hexString = [UIColor cozyHexStringFromColor:pickedColor];
 
         hexString = [hexString stringByAppendingFormat:@":%.2f", pickedColor.alpha];
 
@@ -99,7 +99,7 @@
         return;
     }
 
-    _colorPreview.backgroundColor = [UIColor RGBAColorFromHexString:color];
+    _colorPreview.backgroundColor = [UIColor cozyRGBAColorFromHexString:color];
     NSUInteger location = [color rangeOfString:@":"].location;
 
     if(location != NSNotFound) {

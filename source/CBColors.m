@@ -5,7 +5,7 @@
 @end
 
 @implementation UIImage (CozyBadges)
-- (UIColor *)averageColor {
+- (UIColor *)cozyDominantColor {
 
     int width = self.size.width;
     int height = self.size.height;
@@ -105,7 +105,7 @@
 @end
 
 @implementation UIColor (CozyBadges)
-+(UIColor *)RGBAColorFromHexString:(NSString *)string {
++(UIColor *)cozyRGBAColorFromHexString:(NSString *)string {
     if(string.length == 0) {
         return [UIColor blackColor];
     }
@@ -136,7 +136,7 @@
                     alpha:alpha];
 }
 
-+(NSString *)hexStringFromColor:(UIColor *)color {
++(NSString *)cozyHexStringFromColor:(UIColor *)color {
     const CGFloat *components = CGColorGetComponents(color.CGColor);
 
     CGFloat r = components[0];
@@ -146,7 +146,7 @@
     return [NSString stringWithFormat:@"#%02X%02X%02X", (int)(r * 255), (int)(g * 255), (int)(b * 255)];
 }
 
-- (BOOL)isDarkColor {
+- (BOOL)cozyIsDarkColor {
     const CGFloat *componentColors = CGColorGetComponents(self.CGColor);
     CGFloat colorBrightness = ((componentColors[0] * 299) + (componentColors[1] * 587) + (componentColors[2] * 114)) / 1000;
 

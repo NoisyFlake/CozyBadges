@@ -212,12 +212,12 @@ struct SBIconImageInfo imageInfo;
 				if (!self.hasNotification && self.folderIcon) return UIColor.whiteColor;
 
 				SBIcon *actualIcon = self.hasNotification && self.folderIcon != nil ? self.folderIcon : self.icon;
-				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] averageColor];
+				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] cozyDominantColor];
 			}
 
 			return self.dominantColor;
 		} else {
-			return [UIColor RGBAColorFromHexString:[settings valueForKey:manualKey]];
+			return [UIColor cozyRGBAColorFromHexString:[settings valueForKey:manualKey]];
 		}
 	}
 
@@ -239,7 +239,7 @@ struct SBIconImageInfo imageInfo;
 
 	-(UIColor *)textColor {
 		if ([self focusHighlightColor]) {
-			return [[self focusHighlightColor] isDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
+			return [[self focusHighlightColor] cozyIsDarkColor] ? [UIColor whiteColor] : [UIColor blackColor];
 		}
 
 		return [self cozyColorFor:@"text"] ?: %orig;

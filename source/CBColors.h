@@ -3,12 +3,12 @@
 @end
 
 @interface UIImage (CozyBadges)
-- (UIColor *)averageColor;
+- (UIColor *)cozyDominantColor;
 -(int)colourDistance:(RGBPixel *)a andB:(RGBPixel *)b;
 @end
 
 @interface UIColor (CozyBadges)
-+ (UIColor *)RGBAColorFromHexString:(NSString *)string;
-+ (NSString *)hexStringFromColor:(UIColor *)color;
-- (BOOL)isDarkColor;
++ (UIColor *)cozyRGBAColorFromHexString:(NSString *)string;
++ (NSString *)cozyHexStringFromColor:(UIColor *)color;
+- (BOOL)cozyIsDarkColor;
 @end
