@@ -14,6 +14,7 @@
 #import "CBColors.h"
 
 CozyPrefs *settings;
+NSMutableDictionary *colorCache;
 
 struct SBIconImageInfo imageInfo;
 
@@ -212,7 +213,17 @@ struct SBIconImageInfo imageInfo;
 				if (!self.hasNotification && self.folderIcon) return UIColor.whiteColor;
 
 				SBIcon *actualIcon = self.hasNotification && self.folderIcon != nil ? self.folderIcon : self.icon;
-				self.dominantColor = [[actualIcon unmaskedIconImageWithInfo:imageInfo] cozyDominantColor];
+				UIImage *image = [actualIcon unmaskedIconImageWithInfo:imageInfo];
+
+				NSString *iconIdentifier = [UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+				UIColor *color = colorCache[iconIdentifier];
+
+				if (iconIdentifier != nil && color == nil) {
+					color = [image cozyDominantColor];
+					[colorCache setObject:color forKey:iconIdentifier];
+				}
+
+				self.dominantColor = color;
 			}
 
 			return self.dominantColor;
@@ -287,6 +298,8 @@ struct SBIconImageInfo imageInfo;
 		imageInfo.size = CGSizeMake(30, 30);
 		imageInfo.optionA = 2;
 		imageInfo.optionB = 0;
+
+		colorCache = [[NSMutableDictionary alloc] init];
 
 		%init(_ungrouped);
 	}
