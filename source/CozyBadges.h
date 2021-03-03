@@ -1,4 +1,5 @@
 #define isIconInDock ([self.location isEqual:@"SBIconLocationDock"] || [self.location isEqual:@"SBIconLocationFloatingDock"] || [self.location isEqual:@"SBIconLocationFloatingDockSuggestions"])
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 typedef struct SBIconImageInfo {
     CGSize size;
@@ -13,6 +14,10 @@ typedef struct SBIconImageInfo {
 - (id)init;
 -(BOOL)boolForKey:(NSString *)key;
 -(NSString *)valueForKey:(NSString *)key;
+@end
+
+@interface NSObject (Velvet)
+- (id)safeValueForKey:(id)arg1;
 @end
 
 @interface UIView (CozyBadges)
@@ -70,8 +75,14 @@ typedef struct SBIconImageInfo {
 @property (nonatomic,retain) SBIcon * icon;
 @property (nonatomic,retain) _UILegibilitySettings * legibilitySettings;
 @property (nonatomic,copy) NSString * location;
+@property (nonatomic, assign) BOOL allowsLabelArea;
+@property (nonatomic, assign) BOOL labelHidden;
+@property (nonatomic, assign) BOOL paused;
+@property (nonatomic, retain) id delegate;
 @property (nonatomic, retain) SBIconLabelView *labelView;
+@property (nonatomic, retain) SBFolderIcon *folderIcon;
 -(SBIconLabelImageParameters *)_labelImageParameters;
+-(BOOL)isLabelHidden;
 @end
 
 @interface SBIconLegibilityLabelView : _UILegibilityView

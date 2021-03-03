@@ -70,7 +70,7 @@ struct SBIconImageInfo imageInfo;
 				}
 
 			} else if (!isIconInDock) {
-				labelView.hidden = ([settings boolForKey:@"hideLabels"] &&
+				labelView.hidden = ([settings boolForKey:@"hideLabels"] && //![self.location isEqual:@"SBIconLocationFolder"] && self.folderIcon == nil && 
 					(![[%c(SBIconController) sharedInstance] allowsBadgingForIcon:[self icon]] || [[self icon] badgeValue] <= 0));
 			}
 
@@ -103,7 +103,7 @@ struct SBIconImageInfo imageInfo;
 
 	-(BOOL)allowsLabelArea {
 		// Allow labels in the dock
-		if (isIconInDock && [settings boolForKey:@"dockEnabled"]) {
+		if (isIconInDock && [settings boolForKey:@"dockEnabled"] && (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"14.0") || [self._viewControllerForAncestor isKindOfClass:%c(SBRootFolderController)])) {
 			return YES;
 		}
 
@@ -259,7 +259,7 @@ struct SBIconImageInfo imageInfo;
 	-(NSString *)text {
 		NSString *text = %orig;
 
-		if (self.hasNotification) {
+		if (self.hasNotification /* && !self.folderIcon */) {
 
 			if ([settings boolForKey:@"nameEnabled"]) {
 				NSString *bundleID = self.folderIcon && self.folderNotificationApps == 1 ? self.folderIcon.applicationBundleID : self.icon.applicationBundleID; // Allow using the special text in case there's only 1 notification inside the folder
