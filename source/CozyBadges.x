@@ -3,7 +3,7 @@
 	CozyBadges
 	A cozy place for your badges
 
-	Copyright (C) 2020 by NoisyFlake
+	Copyright (C) 2021 by NoisyFlake
 
 	All Rights Reserved
 

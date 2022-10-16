@@ -5,7 +5,7 @@
 - (id)initWithSpecifier:(PSSpecifier *)specifier {
 	self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Banner" specifier:specifier];
 	if (self) {
-		CGFloat x = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? -20 : 0;
+		CGFloat x = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad ? -20 : 0;
 
 		UILabel *tweakName = [[UILabel alloc] initWithFrame:CGRectMake(x, 23, self.frame.size.width, 10)];
 		[tweakName layoutIfNeeded];
