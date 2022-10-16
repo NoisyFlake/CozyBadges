@@ -2,7 +2,6 @@
 
 #import "../../source/CBColors.h"
 #import <libcolorpicker.h>
-#import <Preferences/PSSpecifier.h>
 
 @interface CozyColorPickerCell ()
 

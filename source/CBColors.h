@@ -1,3 +1,5 @@
+#import <UIKit/UIKit.h>
+
 @interface RGBPixel : NSObject
 @property int r, g, b, d;
 @end

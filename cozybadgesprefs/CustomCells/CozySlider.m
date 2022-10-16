@@ -3,13 +3,6 @@
 @interface PSSegmentableSlider : UISlider
 @end
 
-@interface PSControlTableCell : PSTableCell
-@property (nonatomic, retain) UIControl *control;
-@end
-
-@interface PSSliderTableCell : PSControlTableCell
-@end
-
 @interface CozySlider : PSSliderTableCell
 @end
 

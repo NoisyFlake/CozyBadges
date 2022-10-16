@@ -44,10 +44,6 @@ static NSString *defaultFile = @"/Library/PreferenceBundles/CozyBadgesPrefs.bund
 }
 
 -(BOOL)boolForKey:(NSString *)key {
-	if ([key isEqual:@"dockHideLabels"] && [%c(SBFloatingDockController) isFloatingDockSupported]) {
-		return YES;
-	}
-	
 	id ret = _settings[key] ?: _defaultSettings[key];
 	return [ret boolValue];
 }

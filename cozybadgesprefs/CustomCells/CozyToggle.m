@@ -1,13 +1,5 @@
 #include "../CozyHeaders.h"
 
-@interface PSControlTableCell : PSTableCell
-@property (nonatomic, retain) UIControl *control;
-@end
-
-@interface PSSwitchTableCell : PSControlTableCell
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(id)identifier specifier:(id)specifier;
-@end
-
 @interface CozyToggle : PSSwitchTableCell
 @end
 

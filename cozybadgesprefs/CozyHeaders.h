@@ -1,5 +1,4 @@
-#import <Preferences/PSListController.h>
-#import <Preferences/PSSpecifier.h>
+#import <Preferences/Preferences.h>
 
 #define kCOZYCOLOR [UIColor colorWithRed:0.58 green:0.44 blue:0.75 alpha:1.0]
 
