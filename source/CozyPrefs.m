@@ -3,8 +3,8 @@
 
 static CozyPrefs *sharedInstance = nil;
 
-static NSString *settingsFile = @"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist";
-static NSString *defaultFile = @"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist";
+static NSString *settingsFile = ROOT_PATH_NS(@"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist");
+static NSString *defaultFile = ROOT_PATH_NS(@"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist");
 
 @implementation CozyPrefs
 
