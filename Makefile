@@ -1,3 +1,6 @@
+export FINAL = 1
+DEBUG = 0
+
 TARGET = iphone:clang:latest
 ARCHS = arm64 arm64e
 

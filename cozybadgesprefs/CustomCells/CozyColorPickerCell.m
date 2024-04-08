@@ -54,7 +54,7 @@
 
         hexString = [hexString stringByAppendingFormat:@":%.2f", pickedColor.alpha];
 
-        NSString *path = [NSString stringWithFormat:@"/User/Library/Preferences/%@.plist", self.specifier.properties[@"defaults"]];
+        NSString *path = [NSString stringWithFormat:ROOT_PATH_NS(@"/User/Library/Preferences/%@.plist"), self.specifier.properties[@"defaults"]];
         NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithContentsOfFile:path];
         [settings setObject:hexString forKey:self.specifier.properties[@"key"]];
         [settings writeToFile:path atomically:YES];
@@ -75,11 +75,11 @@
 }
 
 -(NSString *)previewColor {
-    NSMutableDictionary *_prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.noisyflake.cozybadgesprefs.plist"];
+    NSMutableDictionary *_prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:ROOT_PATH_NS(@"/var/mobile/Library/Preferences/com.noisyflake.cozybadgesprefs.plist")];
     NSString *color = [_prefs valueForKey:[self.specifier propertyForKey:@"key"]];
 
     if (color == nil) {
-        NSMutableDictionary *_defaultPrefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist"];
+        NSMutableDictionary *_defaultPrefs = [[NSMutableDictionary alloc] initWithContentsOfFile:ROOT_PATH_NS(@"/Library/PreferenceBundles/CozyBadgesPrefs.bundle/defaults.plist")];
         color = [_defaultPrefs valueForKey:[self.specifier propertyForKey:@"key"]];
     }
 

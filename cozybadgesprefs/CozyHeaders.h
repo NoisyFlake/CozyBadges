@@ -1,4 +1,5 @@
 #import <Preferences/Preferences.h>
+#import "rootless.h"
 
 #define kCOZYCOLOR [UIColor colorWithRed:0.58 green:0.44 blue:0.75 alpha:1.0]
 

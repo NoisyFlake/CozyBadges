@@ -52,7 +52,7 @@
 }
 
 - (BOOL)isValueSet:(NSString *)key {
-	NSString *path = @"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist";
+	NSString *path = ROOT_PATH_NS(@"/User/Library/Preferences/com.noisyflake.cozybadgesprefs.plist");
 	NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:path];
 	NSString *singularKey = [NSString stringWithFormat:@"nameSingular_%@", key];
 	NSString *pluralKey = [NSString stringWithFormat:@"namePlural_%@", key];
